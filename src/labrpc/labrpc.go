@@ -49,15 +49,18 @@ package labrpc
 //   pass svc to srv.AddService()
 //
 
-import "6.5840/labgob"
-import "bytes"
-import "reflect"
-import "sync"
-import "log"
-import "strings"
-import "math/rand"
-import "time"
-import "sync/atomic"
+import (
+	"bytes"
+	"log"
+	"math/rand"
+	"reflect"
+	"strings"
+	"sync"
+	"sync/atomic"
+	"time"
+
+	"6.5840/labgob"
+)
 
 const (
 	SHORTDELAY = 27   // ms
@@ -111,7 +114,6 @@ func (e *ClientEnd) Call(svcMeth string, args interface{}, reply interface{}) bo
 		// entire Network has been destroyed.
 		return false
 	}
-
 	//
 	// wait for the reply.
 	//
@@ -312,7 +314,8 @@ func (rn *Network) processReq(req reqMsg) {
 	} else {
 		// simulate no reply and eventual timeout.
 		ms := 0
-		if rn.IsLongDelays() {
+		rn.mu.Lock()
+		if rn.longDelays {
 			// let Raft tests check that leader doesn't send
 			// RPCs synchronously.
 			ms = (rand.Int() % LONGDELAY)
@@ -321,6 +324,7 @@ func (rn *Network) processReq(req reqMsg) {
 			// server in fairly rapid succession.
 			ms = (rand.Int() % 100)
 		}
+		rn.mu.Unlock()
 		time.AfterFunc(time.Duration(ms)*time.Millisecond, func() {
 			req.replyCh <- replyMsg{false, nil}
 		})

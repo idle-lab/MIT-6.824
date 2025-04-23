@@ -10,6 +10,9 @@ package raft
 
 import (
 	"fmt"
+	"io"
+	"log"
+
 	// "log"
 	"math/rand"
 	"sync"
@@ -17,7 +20,7 @@ import (
 	"testing"
 	"time"
 
-	"6.5840/tester1"
+	tester "6.5840/tester1"
 )
 
 // The tester generously allows solutions to complete elections in one second
@@ -25,6 +28,7 @@ import (
 const RaftElectionTimeout = 1000 * time.Millisecond
 
 func TestInitialElection3A(t *testing.T) {
+	log.SetOutput(io.Discard)
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -55,6 +59,7 @@ func TestInitialElection3A(t *testing.T) {
 }
 
 func TestReElection3A(t *testing.T) {
+	log.SetOutput(io.Discard)
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -66,6 +71,7 @@ func TestReElection3A(t *testing.T) {
 
 	// if the leader disconnects, a new one should be elected.
 	ts.g.DisconnectAll(leader1)
+	log.Printf("disconnected %v\n", leader1)
 	tester.AnnotateConnection(ts.g.GetConnected())
 	ts.checkOneLeader()
 
@@ -99,6 +105,7 @@ func TestReElection3A(t *testing.T) {
 }
 
 func TestManyElections3A(t *testing.T) {
+	log.SetOutput(io.Discard)
 	servers := 7
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -110,6 +117,7 @@ func TestManyElections3A(t *testing.T) {
 
 	iters := 10
 	for ii := 1; ii < iters; ii++ {
+		log.SetPrefix(fmt.Sprintf("iteration %v 1 |", ii))
 		// disconnect three nodes
 		i1 := rand.Int() % servers
 		i2 := rand.Int() % servers
@@ -119,6 +127,7 @@ func TestManyElections3A(t *testing.T) {
 		ts.g.DisconnectAll(i3)
 		tester.AnnotateConnection(ts.g.GetConnected())
 
+		log.SetPrefix(fmt.Sprintf("iteration %v disconnect [%d, %d, %d] |", ii, i1, i2, i3))
 		// either the current leader should still be alive,
 		// or the remaining four should elect a new one.
 		ts.checkOneLeader()
@@ -127,7 +136,11 @@ func TestManyElections3A(t *testing.T) {
 		ts.g.ConnectOne(i2)
 		ts.g.ConnectOne(i3)
 		tester.AnnotateConnection(ts.g.GetConnected())
+		log.SetPrefix(fmt.Sprintf("iteration %v 3 |", ii))
 	}
+	log.SetPrefix("")
+	log.Printf("reconnected all servers\n")
+	// log.SetOutput(io.Discard)
 	ts.checkOneLeader()
 }
 
