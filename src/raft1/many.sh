@@ -1,14 +1,19 @@
 #!/bin/bash
 
+LOG_FILE="fail_log.txt"
+> "$LOG_FILE"  # 清空旧日志
+
 for i in $(seq 1 200); do
     echo "===== Run #$i ====="
     
-    # 执行测试命令
-    go test -run 3A -race
+    # 把本次测试的输出先捕获到一个变量
+    output=$(go test -run 3B 2>&1)
+    status=$?
 
-    # 检查上一条命令是否成功
-    if [ $? -ne 0 ]; then
-        echo "❌ Test failed at run #$i. Exiting..."
+    if [ $status -ne 0 ]; then
+        echo "❌ Test failed at run #$i. Saving log and exiting..."
+        echo "===== Run #$i FAILED =====" >> "$LOG_FILE"
+        echo "$output" >> "$LOG_FILE"
         exit 1
     fi
 done

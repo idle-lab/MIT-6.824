@@ -71,7 +71,7 @@ func TestReElection3A(t *testing.T) {
 
 	// if the leader disconnects, a new one should be elected.
 	ts.g.DisconnectAll(leader1)
-	log.Printf("disconnected %v\n", leader1)
+	DPrintf("disconnected %v\n", leader1)
 	tester.AnnotateConnection(ts.g.GetConnected())
 	ts.checkOneLeader()
 
@@ -139,12 +139,13 @@ func TestManyElections3A(t *testing.T) {
 		log.SetPrefix(fmt.Sprintf("iteration %v 3 |", ii))
 	}
 	log.SetPrefix("")
-	log.Printf("reconnected all servers\n")
+	DPrintf("reconnected all servers\n")
 	// log.SetOutput(io.Discard)
 	ts.checkOneLeader()
 }
 
 func TestBasicAgree3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -169,6 +170,7 @@ func TestBasicAgree3B(t *testing.T) {
 // check, based on counting bytes of RPCs, that
 // each command is sent to each peer just once.
 func TestRPCBytes3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -201,6 +203,7 @@ func TestRPCBytes3B(t *testing.T) {
 
 // test just failure of followers.
 func TestFollowerFailure3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -244,6 +247,7 @@ func TestFollowerFailure3B(t *testing.T) {
 
 // test just failure of leaders.
 func TestLeaderFailure3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -283,6 +287,7 @@ func TestLeaderFailure3B(t *testing.T) {
 // test that a follower participates after
 // disconnect and re-connect.
 func TestFailAgree3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -295,6 +300,7 @@ func TestFailAgree3B(t *testing.T) {
 	// disconnect one follower from the network.
 	leader := ts.checkOneLeader()
 	ts.g.DisconnectAll((leader + 1) % servers)
+	log.SetPrefix(fmt.Sprintf("disconnect %d | ", (leader+1)%servers) + log.Prefix())
 	tester.AnnotateConnection(ts.g.GetConnected())
 
 	// the leader and remaining follower should be
@@ -307,6 +313,7 @@ func TestFailAgree3B(t *testing.T) {
 
 	// re-connect
 	ts.g.ConnectOne((leader + 1) % servers)
+	log.SetPrefix(fmt.Sprintf("connect %d | ", (leader+1)%servers) + log.Prefix())
 	tester.AnnotateConnection(ts.g.GetConnected())
 
 	// the full set of servers should preserve
@@ -318,6 +325,7 @@ func TestFailAgree3B(t *testing.T) {
 }
 
 func TestFailNoAgree3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 5
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -370,6 +378,7 @@ func TestFailNoAgree3B(t *testing.T) {
 }
 
 func TestConcurrentStarts3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -493,6 +502,7 @@ loop:
 }
 
 func TestRejoin3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -505,6 +515,7 @@ func TestRejoin3B(t *testing.T) {
 	// leader network failure
 	leader1 := ts.checkOneLeader()
 	ts.g.DisconnectAll(leader1)
+	log.SetPrefix(fmt.Sprintf("disconnected %d | ", leader1) + log.Prefix())
 	tester.AnnotateConnection(ts.g.GetConnected())
 
 	// make old leader try to agree on some entries
@@ -521,21 +532,25 @@ func TestRejoin3B(t *testing.T) {
 	// new leader network failure
 	leader2 := ts.checkOneLeader()
 	ts.g.DisconnectAll(leader2)
+	log.SetPrefix(fmt.Sprintf("disconnected %d | ", leader2) + log.Prefix())
 
 	// old leader connected again
 	ts.g.ConnectOne(leader1)
+	log.SetPrefix(fmt.Sprintf("connected %d | ", leader1) + log.Prefix())
 	tester.AnnotateConnection(ts.g.GetConnected())
 
 	ts.one(104, 2, true)
 
 	// all together now
 	ts.g.ConnectOne(leader2)
+	log.SetPrefix(fmt.Sprintf("connected %d | ", leader1) + log.Prefix())
 	tester.AnnotateConnection(ts.g.GetConnected())
 
 	ts.one(105, servers, true)
 }
 
 func TestBackup3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 5
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -570,6 +585,7 @@ func TestBackup3B(t *testing.T) {
 	ts.g.ConnectOne((leader1 + 3) % servers)
 	ts.g.ConnectOne((leader1 + 4) % servers)
 	tester.AnnotateConnection(ts.g.GetConnected())
+	log.SetPrefix(fmt.Sprintf("[%d %d %d] | ", (leader1+2)%servers, (leader1+3)%servers, (leader1+4)%servers) + log.Prefix())
 
 	// lots of successful commands to new group.
 	for i := 0; i < 50; i++ {
@@ -603,7 +619,7 @@ func TestBackup3B(t *testing.T) {
 	ts.g.ConnectOne((leader1 + 1) % servers)
 	ts.g.ConnectOne(other)
 	tester.AnnotateConnection(ts.g.GetConnected())
-
+	log.SetPrefix(fmt.Sprintf("[%d %d %d] | ", leader1, (leader1+1)%servers, other) + log.Prefix())
 	// lots of successful commands to new group.
 	for i := 0; i < 50; i++ {
 		ts.one(rand.Int(), 3, true)
@@ -618,6 +634,7 @@ func TestBackup3B(t *testing.T) {
 }
 
 func TestCount3B(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
