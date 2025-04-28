@@ -9,6 +9,7 @@ package raft
 import (
 	//	"bytes"
 
+	"bytes"
 	"fmt"
 	"log"
 	"math/rand"
@@ -17,6 +18,7 @@ import (
 	"time"
 
 	//	"6.5840/labgob"
+	"6.5840/labgob"
 	"6.5840/labrpc"
 	"6.5840/raftapi"
 	tester "6.5840/tester1"
@@ -115,13 +117,15 @@ func (rf *Raft) GetState() (int, bool) {
 // (or nil if there's not yet a snapshot).
 func (rf *Raft) persist() {
 	// Your code here (3C).
-	// Example:
-	// w := new(bytes.Buffer)
-	// e := labgob.NewEncoder(w)
-	// e.Encode(rf.xxx)
-	// e.Encode(rf.yyy)
-	// raftstate := w.Bytes()
-	// rf.persister.Save(raftstate, nil)
+	w := new(bytes.Buffer)
+	e := labgob.NewEncoder(w)
+	e.Encode(rf.currentTerm)
+	e.Encode(rf.votedFor)
+	e.Encode(rf.log)
+	raftState := w.Bytes()
+	DPrintf("[%s %d] persist %v\n", rf.stateName, rf.me, raftState)
+
+	rf.persister.Save(raftState, nil)
 }
 
 // restore previously persisted state.
@@ -130,18 +134,23 @@ func (rf *Raft) readPersist(data []byte) {
 		return
 	}
 	// Your code here (3C).
-	// Example:
-	// r := bytes.NewBuffer(data)
-	// d := labgob.NewDecoder(r)
-	// var xxx
-	// var yyy
-	// if d.Decode(&xxx) != nil ||
-	//    d.Decode(&yyy) != nil {
-	//   error...
-	// } else {
-	//   rf.xxx = xxx
-	//   rf.yyy = yyy
-	// }
+	r := bytes.NewBuffer(data)
+	d := labgob.NewDecoder(r)
+	var (
+		currentTerm int
+		votedFor    int
+		log         []RaftLog
+	)
+	if d.Decode(&currentTerm) != nil ||
+		d.Decode(&votedFor) != nil ||
+		d.Decode(&log) != nil {
+		panic("decode failed.")
+	}
+	rf.currentTerm = currentTerm
+	rf.votedFor = votedFor
+	rf.log = log
+	rf.repCount = make([]int, len(rf.log))
+	DPrintf("[server %d] restart and read log %v\n", rf.me, rf.log)
 }
 
 // how many bytes in Raft's persisted log?
@@ -157,6 +166,22 @@ func (rf *Raft) PersistBytes() int {
 // that index. Raft should now trim its log as much as possible.
 func (rf *Raft) Snapshot(index int, snapshot []byte) {
 	// Your code here (3D).
+}
+
+func (rf *Raft) updateTerm(term int) {
+	if rf.currentTerm == term {
+		return
+	}
+	rf.currentTerm = term
+	rf.persist()
+}
+
+func (rf *Raft) updateVoteFor(id int) {
+	if rf.votedFor == id {
+		return
+	}
+	rf.votedFor = id
+	rf.persist()
 }
 
 // example RequestVote RPC arguments structure.
@@ -194,10 +219,10 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 			DPrintf("[%s %d] become follower, because there is a candidate with lager term %d\n", rf.stateName, rf.me, args.Term)
 			rf.becomeFollower(args.Term)
 		}
-		rf.votedFor = -1
+		rf.updateVoteFor(-1)
 	}
 
-	rf.currentTerm = args.Term
+	rf.updateTerm(args.Term)
 	reply.Term = args.Term
 
 	lastidx := len(rf.log) - 1
@@ -215,7 +240,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	}
 
 	reply.VoteGranted = true
-	rf.votedFor = args.CandidateId
+	rf.updateVoteFor(args.CandidateId)
 	DPrintf("[%s %d] voted for %d, term %d\n", rf.stateName, rf.me, args.CandidateId, args.Term)
 	rf.mu.Unlock()
 
@@ -251,11 +276,11 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 			rf.becomeFollower(args.Term)
 			DPrintf("[%s %d] become follower, because there is a leader with lager term %d\n", rf.stateName, rf.me, args.Term)
 		}
-		rf.votedFor = args.LeaderId
+		rf.updateVoteFor(args.LeaderId)
 	}
 
-	rf.currentTerm = args.Term
-	reply.Term = rf.currentTerm
+	rf.updateTerm(args.Term)
+	reply.Term = args.Term
 
 	if args.Entries == nil {
 		DPrintf("[%s %d] received heartbeat from %d, term %d\n", rf.stateName, rf.me, args.LeaderId, args.Term)
@@ -402,6 +427,8 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 	index = rf.log[len(rf.log)-1].Index
 	term = rf.log[len(rf.log)-1].Term
 	DPrintf("[leader %d] start command %v, index %d, term %d\n", rf.me, command, index, term)
+
+	rf.persist()
 	return index, term, isLeader
 }
 
@@ -434,6 +461,8 @@ func (rf *Raft) becomeFollower(term int) {
 	rf.votedFor = -1
 	rf.stateName = "follower"
 	rf.state = FOLLOWER
+
+	rf.persist()
 }
 
 func (rf *Raft) becomeCandidate() {
@@ -449,6 +478,8 @@ func (rf *Raft) becomeCandidate() {
 	rf.votedFor = rf.me
 	rf.stateName = "candidate"
 	rf.state = CANDIDATE
+
+	rf.persist()
 }
 
 func (rf *Raft) becomeLeader() {
@@ -467,6 +498,7 @@ func (rf *Raft) becomeLeader() {
 		rf.matchIndex[i] = 0
 	}
 
+	rf.persist()
 	DPrintf("[server %d] become leader, term %d\n", rf.me, rf.currentTerm)
 	log.SetPrefix(fmt.Sprintf("leader %d | ", rf.me) + log.Prefix())
 }
@@ -673,7 +705,7 @@ func (rf *Raft) followerTick() {
 			return
 		case <-rf.heartbeatCh:
 			rf.mu.Lock()
-			DPrintf("[%s %d] 2 commitIndex %d, lastApplied %d", rf.stateName, rf.me, rf.commitIndex, rf.lastApplied)
+			DPrintf("[%s %d] commitIndex %d, lastApplied %d", rf.stateName, rf.me, rf.commitIndex, rf.lastApplied)
 			rf.mu.Unlock()
 			ticker.Reset()
 		}
@@ -715,6 +747,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 	rf.peers = peers
 	rf.persister = persister
 	rf.me = me
+	labgob.Register(RaftLog{})
 
 	// Your initialization code here (3A, 3B, 3C).
 	rf.log = make([]RaftLog, 1)
