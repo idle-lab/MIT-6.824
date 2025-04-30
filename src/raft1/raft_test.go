@@ -12,6 +12,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"strings"
 
 	// "log"
 	"math/rand"
@@ -791,6 +792,7 @@ loop:
 }
 
 func TestPersist13C(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -841,6 +843,7 @@ func TestPersist13C(t *testing.T) {
 }
 
 func TestPersist23C(t *testing.T) {
+	log.SetPrefix("")
 	servers := 5
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -858,6 +861,7 @@ func TestPersist23C(t *testing.T) {
 		ts.g.ShutdownServer((leader1 + 1) % servers)
 		ts.g.ShutdownServer((leader1 + 2) % servers)
 		tester.AnnotateShutdown([]int{(leader1 + 1) % servers, (leader1 + 2) % servers})
+		DPrintf("[test] crash [%v, %v]\n", (leader1+1)%servers, (leader1+2)%servers)
 
 		ts.one(10+index, servers-2, true)
 		index++
@@ -865,17 +869,20 @@ func TestPersist23C(t *testing.T) {
 		ts.g.ShutdownServer((leader1 + 0) % servers)
 		ts.g.ShutdownServer((leader1 + 3) % servers)
 		ts.g.ShutdownServer((leader1 + 4) % servers)
+		DPrintf("[test] crash [%v, %v, %v]\n", (leader1+0)%servers, (leader1+3)%servers, (leader1+4)%servers)
 		tester.AnnotateShutdown([]int{
 			(leader1 + 0) % servers, (leader1 + 3) % servers, (leader1 + 4) % servers,
 		})
 
 		ts.restart((leader1 + 1) % servers)
 		ts.restart((leader1 + 2) % servers)
+		DPrintf("[test] restart [%v, %v]\n", (leader1+1)%servers, (leader1+2)%servers)
 		tester.AnnotateRestart([]int{(leader1 + 1) % servers, (leader1 + 2) % servers})
 
 		time.Sleep(RaftElectionTimeout)
 
 		ts.restart((leader1 + 3) % servers)
+		DPrintf("[test] restart [%v, %v]\n", (leader1+1)%servers, (leader1+2)%servers)
 		tester.AnnotateRestart([]int{(leader1 + 3) % servers})
 
 		ts.one(10+index, servers-2, true)
@@ -890,6 +897,7 @@ func TestPersist23C(t *testing.T) {
 }
 
 func TestPersist33C(t *testing.T) {
+	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -930,6 +938,7 @@ func TestPersist33C(t *testing.T) {
 // The leader in a new term may try to finish replicating log entries that
 // haven't been committed yet.
 func TestFigure83C(t *testing.T) {
+	log.SetPrefix("")
 	servers := 5
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -990,6 +999,7 @@ func TestFigure83C(t *testing.T) {
 }
 
 func TestUnreliableAgree3C(t *testing.T) {
+	log.SetPrefix("")
 	servers := 5
 	ts := makeTest(t, servers, false, false)
 	defer ts.cleanup()
@@ -1018,7 +1028,33 @@ func TestUnreliableAgree3C(t *testing.T) {
 
 }
 
+func stringifyCurPartition(mp []bool) string {
+	connected := make([]int, 0)
+	disconnected := make([]int, 0)
+	for server, f := range mp {
+		if !f {
+			disconnected = append(disconnected, server)
+		} else {
+			connected = append(connected, server)
+		}
+	}
+	var builder strings.Builder
+	builder.WriteString("[")
+	for i := 0; i < len(connected); i++ {
+		builder.WriteString(fmt.Sprintf("%d", connected[i]))
+		if i < len(connected)-1 {
+			builder.WriteString(", ")
+		}
+	}
+	builder.WriteString("]")
+	for i := 0; i < len(disconnected); i++ {
+		builder.WriteString(fmt.Sprintf("[%d]", disconnected[i]))
+	}
+	return builder.String()
+}
+
 func TestFigure8Unreliable3C(t *testing.T) {
+	log.SetPrefix("")
 	servers := 5
 	ts := makeTest(t, servers, false, false)
 	defer ts.cleanup()
@@ -1030,6 +1066,7 @@ func TestFigure8Unreliable3C(t *testing.T) {
 
 	nup := servers
 	for iters := 0; iters < 1000; iters++ {
+		log.SetPrefix(fmt.Sprintf("%s | ", stringifyCurPartition(ts.g.GetConnected())))
 		if iters == 200 {
 			ts.SetLongReordering(true)
 		}
@@ -1076,12 +1113,12 @@ func TestFigure8Unreliable3C(t *testing.T) {
 		}
 	}
 	tester.AnnotateConnection(ts.g.GetConnected())
+	log.SetPrefix(fmt.Sprintf("%s | ", stringifyCurPartition(ts.g.GetConnected())))
 
 	ts.one(rand.Int()%10000, servers, true)
 }
 
 func internalChurn(t *testing.T, reliable bool) {
-
 	servers := 5
 	ts := makeTest(t, servers, reliable, false)
 	defer ts.cleanup()
@@ -1242,10 +1279,12 @@ func internalChurn(t *testing.T, reliable bool) {
 }
 
 func TestReliableChurn3C(t *testing.T) {
+	log.SetPrefix("")
 	internalChurn(t, true)
 }
 
 func TestUnreliableChurn3C(t *testing.T) {
+	log.SetPrefix("")
 	internalChurn(t, false)
 }
 

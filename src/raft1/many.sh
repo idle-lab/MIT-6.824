@@ -7,7 +7,7 @@ for i in $(seq 1 200); do
     echo "===== Run #$i ====="
     
     # 把本次测试的输出先捕获到一个变量
-    output=$(time go test -run 3B 2>&1)
+    output=$(time go test -run 3C 2>&1)
     status=$?
 
     if [ $status -ne 0 ]; then
