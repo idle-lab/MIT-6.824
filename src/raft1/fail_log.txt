@@ -1,0 +1,11 @@
+===== Run #1 FAILED =====
+Test (3D): install snapshots (crash) (reliable network)...
+panic: runtime error: index out of range [-78]
+
+goroutine 1265 [running]:
+6.5840/raft1.(*Raft).applyer(0xc00026a500)
+	/home/cyb/6.5840/src/raft1/raft.go:897 +0x373
+created by 6.5840/raft1.Make in goroutine 19
+	/home/cyb/6.5840/src/raft1/raft.go:945 +0x2a5
+exit status 2
+FAIL	6.5840/raft1	9.165s
