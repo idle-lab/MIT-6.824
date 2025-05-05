@@ -1410,7 +1410,9 @@ func TestSnapshotAllCrash3D(t *testing.T) {
 		// crash all
 		ts.g.Shutdown()
 		tester.AnnotateShutdownAll()
+		log.SetPrefix("ShutdownAll | ")
 		ts.g.StartServers()
+		log.SetPrefix("StartServers | ")
 		tester.AnnotateRestartAll()
 
 		index2 := ts.one(rand.Int(), servers, true)

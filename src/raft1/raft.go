@@ -182,7 +182,6 @@ func (rf *Raft) readPersist(data []byte) {
 	if data == nil || len(data) < 1 { // bootstrap without any state?
 		return
 	}
-	// Your code here (3C).
 	r := bytes.NewBuffer(data)
 	d := labgob.NewDecoder(r)
 	var (
@@ -198,7 +197,10 @@ func (rf *Raft) readPersist(data []byte) {
 	rf.currentTerm = currentTerm
 	rf.votedFor = votedFor
 	rf.log = log
+	rf.lastApplied = log[0].Index
+	rf.commitIndex = log[0].Index
 	rf.repCount = make([]int, len(rf.log))
+	rf.snapshot = rf.persister.ReadSnapshot()
 	DPrintf("[server %d] restart\n", rf.me)
 }
 
@@ -241,6 +243,9 @@ func (rf *Raft) updateVoteFor(id int) {
 }
 
 func (rf *Raft) toIndex(index int) int {
+	if index < rf.log[0].Index {
+		panic(fmt.Sprintf("[%s %d %d] index=%d, log[0].Index=%d", rf.stateName, rf.me, rf.currentTerm, index, rf.log[0].Index))
+	}
 	return index - rf.log[0].Index
 }
 
@@ -445,12 +450,12 @@ func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapsho
 	idx := rf.toIndex(args.LastIncludedIndex)
 	if args.LastIncludedIndex > rf.log[len(rf.log)-1].Index {
 		rf.log = make([]RaftLog, 1)
-		rf.log[0].Index = args.LastIncludedIndex
-		rf.log[0].Term = args.LastIncludedTerm
 	} else {
 		rf.log = rf.log[idx:]
 	}
 
+	rf.log[0].Index = args.LastIncludedIndex
+	rf.log[0].Term = args.LastIncludedTerm
 	rf.lastApplied = max(rf.lastApplied, args.LastIncludedIndex)
 	rf.commitIndex = max(rf.commitIndex, args.LastIncludedIndex)
 	rf.snapshot = args.Data
@@ -681,7 +686,9 @@ func (rf *Raft) startHeartbeat() {
 							LeaderCommit: rf.commitIndex,
 						}
 						if rf.nextIndex[server] <= rf.log[len(rf.log)-1].Index {
-							args.Entries = rf.log[rf.toIndex(rf.nextIndex[server]):]
+							slice := rf.log[rf.toIndex(rf.nextIndex[server]):]
+							args.Entries = make([]RaftLog, len(slice))
+							copy(args.Entries, slice)
 						}
 						DPrintf("[%s %d %d] commitIndex %d, lastApplied %d, log %v\n", rf.stateName, rf.me, term, rf.commitIndex, rf.lastApplied, rf.log)
 						rf.mu.Unlock()
@@ -898,13 +905,15 @@ func (rf *Raft) applyer() {
 				CommandIndex:  rf.log[j].Index,
 				SnapshotValid: false,
 			})
-			DPrintf("[%s %d %d] apply log %v, index %d, term %d\n", rf.stateName, rf.me, rf.currentTerm, rf.log[j].Cmd, rf.log[j].Index, rf.log[j].Term)
 		}
+		DPrintf("[%s %d %d] apply logs=%v\n", rf.stateName, rf.me, rf.currentTerm, rf.log[rf.toIndex(rf.lastApplied+1):rf.toIndex(rf.commitIndex+1)])
 		rf.mu.Unlock()
 		for i := range commitLogs {
 			rf.applyCh <- commitLogs[i]
 		}
+		rf.mu.Lock()
 		rf.lastApplied = commitIndex
+		rf.mu.Unlock()
 	}
 }
 
