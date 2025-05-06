@@ -2,24 +2,25 @@ package rsm
 
 import (
 	"sync"
+	"unsafe"
 
 	"6.5840/kvsrv1/rpc"
 	"6.5840/labrpc"
-	"6.5840/raft1"
+	raft "6.5840/raft1"
 	"6.5840/raftapi"
-	"6.5840/tester1"
-
+	tester "6.5840/tester1"
 )
 
 var useRaftStateMachine bool // to plug in another raft besided raft1
-
 
 type Op struct {
 	// Your definitions here.
 	// Field names must start with capital letters,
 	// otherwise RPC will break.
+	Cmd any
+	Me  int
+	Id  int
 }
-
 
 // A server (i.e., ../server.go) that wants to replicate itself calls
 // MakeRSM and must implement the StateMachine interface.  This
@@ -41,6 +42,25 @@ type RSM struct {
 	maxraftstate int // snapshot if log grows this big
 	sm           StateMachine
 	// Your definitions here.
+	curraftstate int
+}
+
+func (rsm *RSM) reader() {
+	for msg := range rsm.applyCh {
+		if msg.CommandValid {
+			rsm.sm.DoOp(msg.Command)
+			rsm.curraftstate += int(unsafe.Sizeof(msg.Command))
+			if rsm.maxraftstate != -1 && rsm.curraftstate > rsm.maxraftstate {
+				// snapshot
+				snapshot := rsm.sm.Snapshot()
+				rsm.rf.Snapshot(msg.CommandIndex, snapshot)
+				rsm.curraftstate = 0
+			}
+		} else if msg.SnapshotValid {
+			rsm.sm.Restore(msg.Snapshot)
+			rsm.curraftstate = 0
+		}
+	}
 }
 
 // servers[] contains the ports of the set of
@@ -68,6 +88,7 @@ func MakeRSM(servers []*labrpc.ClientEnd, me int, persister *tester.Persister, m
 	if !useRaftStateMachine {
 		rsm.rf = raft.Make(servers, me, persister, rsm.applyCh)
 	}
+	go rsm.reader()
 	return rsm
 }
 
@@ -75,16 +96,23 @@ func (rsm *RSM) Raft() raftapi.Raft {
 	return rsm.rf
 }
 
-
 // Submit a command to Raft, and wait for it to be committed.  It
 // should return ErrWrongLeader if client should find new leader and
 // try again.
 func (rsm *RSM) Submit(req any) (rpc.Err, any) {
-
 	// Submit creates an Op structure to run a command through Raft;
 	// for example: op := Op{Me: rsm.me, Id: id, Req: req}, where req
 	// is the argument to Submit and id is a unique id for the op.
+	term, _ := rsm.Raft().GetState()
+	op := Op{Cmd: req, Me: rsm.me, Id: term}
+	index, term, isLeader := rsm.rf.Start(op)
+	if !isLeader {
+		return rpc.ErrWrongLeader, nil
+	}
+
+	// Wait for the command to be committed.
+	
 
 	// your code here
-	return rpc.ErrWrongLeader, nil // i'm dead, try another server.
+	return rpc.OK, nil // i'm dead, try another server.
 }
