@@ -270,13 +270,13 @@ func TestRestartSubmit4A(t *testing.T) {
 	}
 
 	ts.Group(Gid).Shutdown()
-	log.SetPrefix("shutdown all | ")
+	log.SetPrefix("shutdown all 1 | ")
 	tester.AnnotateShutdownAll()
 
 	time.Sleep(1 * time.Second)
 
 	ts.Group(Gid).StartServers()
-	log.SetPrefix("restart all | ")
+	log.SetPrefix("restart all 1 | ")
 	tester.AnnotateRestartAll()
 
 	// submit an Inc
@@ -312,7 +312,7 @@ func TestRestartSubmit4A(t *testing.T) {
 
 	ts.Group(Gid).Shutdown()
 	tester.AnnotateShutdownAll()
-	log.SetPrefix("shutdown all | ")
+	log.SetPrefix("shutdown all 2 | ")
 
 	select {
 	case <-done:
@@ -324,6 +324,7 @@ func TestRestartSubmit4A(t *testing.T) {
 
 	ts.Group(Gid).StartServers()
 	tester.AnnotateRestartAll()
+	log.SetPrefix("restart all 2 | ")
 
 	r = ts.oneInc()
 	ts.checkCounter(r.N, NSRV)

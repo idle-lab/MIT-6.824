@@ -32,8 +32,8 @@ const (
 const (
 	heartbeatInterval     = 50 * time.Millisecond
 	requestVoteInterval   = 200 * time.Millisecond
-	electionTimeoutBegin  = 400 // ms
-	electionTimeoutLength = 200
+	electionTimeoutBegin  = 500 // ms
+	electionTimeoutLength = 300
 )
 
 type RaftLog struct {
@@ -297,6 +297,15 @@ func (rf *Raft) becomeLeader() {
 		rf.nextIndex[i] = rf.log[0].Index + len(rf.log)
 		rf.matchIndex[i] = 0
 	}
+	// no-op
+	// Refer to Section 8
+	rf.log = append(rf.log, RaftLog{
+		Cmd:   nil,
+		Term:  rf.currentTerm,
+		Index: rf.nextIndex[rf.me],
+	})
+	rf.repCount = append(rf.repCount, (1 << rf.me))
+	rf.nextIndex[rf.me]++
 
 	rf.persist()
 	DPrintf("[%s %d %d] candidate => leader\n", rf.stateName, rf.me, rf.currentTerm)
@@ -571,12 +580,11 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 		return index, term, isLeader
 	}
 
-	log := RaftLog{
+	rf.log = append(rf.log, RaftLog{
 		Cmd:   command,
 		Term:  rf.currentTerm,
 		Index: rf.nextIndex[rf.me],
-	}
-	rf.log = append(rf.log, log)
+	})
 	rf.repCount = append(rf.repCount, (1 << rf.me))
 	rf.nextIndex[rf.me]++
 
@@ -602,6 +610,7 @@ func (rf *Raft) Kill() {
 	rf.chMu.Lock()
 	atomic.StoreInt32(&rf.dead, 1)
 	close(rf.applyCh)
+	rf.applyCond.Broadcast()
 	rf.chMu.Unlock()
 }
 
@@ -896,19 +905,27 @@ func (rf *Raft) ticker() {
 func (rf *Raft) applyer() {
 	for !rf.killed() {
 		rf.mu.Lock()
-		for rf.lastApplied == rf.commitIndex {
+		for !rf.killed() && rf.lastApplied == rf.commitIndex {
 			rf.applyCond.Wait()
 		}
 		commitLogs := make([]raftapi.ApplyMsg, rf.commitIndex-rf.lastApplied)
 		commitIndex := rf.commitIndex
 		for i := rf.lastApplied + 1; i <= rf.commitIndex; i++ {
 			j := rf.toIndex(i)
-			commitLogs = append(commitLogs, raftapi.ApplyMsg{
-				CommandValid:  true,
-				Command:       rf.log[j].Cmd,
-				CommandIndex:  rf.log[j].Index,
-				SnapshotValid: false,
-			})
+			if rf.log[j].Cmd == nil {
+				commitLogs = append(commitLogs, raftapi.ApplyMsg{
+					CommandValid:  false,
+					SnapshotValid: false,
+					NoOpLogValid:  true,
+				})
+			} else {
+				commitLogs = append(commitLogs, raftapi.ApplyMsg{
+					CommandValid:  true,
+					Command:       rf.log[j].Cmd,
+					CommandIndex:  rf.log[j].Index,
+					SnapshotValid: false,
+				})
+			}
 		}
 		DPrintf("[%s %d %d] apply logs=%v\n", rf.stateName, rf.me, rf.currentTerm, rf.log[rf.toIndex(rf.lastApplied+1):rf.toIndex(rf.commitIndex+1)])
 		rf.mu.Unlock()
