@@ -3,12 +3,13 @@ package rsm
 import (
 	//"log"
 	"fmt"
+	"log"
 	"sync"
 	"testing"
 	"time"
 
 	"6.5840/kvsrv1/rpc"
-	"6.5840/tester1"
+	tester "6.5840/tester1"
 )
 
 // test that each server executes increments and updates its counter.
@@ -269,11 +270,13 @@ func TestRestartSubmit4A(t *testing.T) {
 	}
 
 	ts.Group(Gid).Shutdown()
+	log.SetPrefix("shutdown all | ")
 	tester.AnnotateShutdownAll()
 
 	time.Sleep(1 * time.Second)
 
 	ts.Group(Gid).StartServers()
+	log.SetPrefix("restart all | ")
 	tester.AnnotateRestartAll()
 
 	// submit an Inc
@@ -309,6 +312,7 @@ func TestRestartSubmit4A(t *testing.T) {
 
 	ts.Group(Gid).Shutdown()
 	tester.AnnotateShutdownAll()
+	log.SetPrefix("shutdown all | ")
 
 	select {
 	case <-done:

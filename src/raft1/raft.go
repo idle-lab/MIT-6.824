@@ -123,6 +123,7 @@ type Raft struct {
 	dead      int32               // set by Kill()
 	applyCond *sync.Cond
 	applyCh   chan raftapi.ApplyMsg
+	chMu      sync.Mutex
 	snapshot  []byte
 
 	// Leader state
@@ -158,7 +159,7 @@ func (rf *Raft) GetState() (int, bool) {
 	term := rf.currentTerm
 	state := rf.state
 	rf.mu.Unlock()
-	return term, state == LEADER
+	return term, !rf.killed() && state == LEADER
 }
 
 // where it can later be retrieved after a crash and restart.
@@ -597,9 +598,11 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 // confusing debug output. any goroutine with a long-running loop
 // should call killed() to check whether it should stop.
 func (rf *Raft) Kill() {
-	atomic.StoreInt32(&rf.dead, 1)
 	// Your code here, if desired.
+	rf.chMu.Lock()
+	atomic.StoreInt32(&rf.dead, 1)
 	close(rf.applyCh)
+	rf.chMu.Unlock()
 }
 
 func (rf *Raft) killed() bool {
@@ -910,7 +913,13 @@ func (rf *Raft) applyer() {
 		DPrintf("[%s %d %d] apply logs=%v\n", rf.stateName, rf.me, rf.currentTerm, rf.log[rf.toIndex(rf.lastApplied+1):rf.toIndex(rf.commitIndex+1)])
 		rf.mu.Unlock()
 		for i := range commitLogs {
+			rf.chMu.Lock()
+			if rf.killed() {
+				rf.chMu.Unlock()
+				break
+			}
 			rf.applyCh <- commitLogs[i]
+			rf.chMu.Unlock()
 		}
 		rf.mu.Lock()
 		rf.lastApplied = commitIndex

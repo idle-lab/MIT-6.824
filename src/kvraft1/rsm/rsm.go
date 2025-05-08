@@ -1,8 +1,11 @@
 package rsm
 
 import (
+	"fmt"
+	"log"
+	"reflect"
 	"sync"
-	"unsafe"
+	"time"
 
 	"6.5840/kvsrv1/rpc"
 	"6.5840/labrpc"
@@ -19,7 +22,6 @@ type Op struct {
 	// otherwise RPC will break.
 	Cmd any
 	Me  int
-	Id  int
 }
 
 // A server (i.e., ../server.go) that wants to replicate itself calls
@@ -42,23 +44,47 @@ type RSM struct {
 	maxraftstate int // snapshot if log grows this big
 	sm           StateMachine
 	// Your definitions here.
-	curraftstate int
+	lastAppliedIndex int
+	nextCmdId        uint64
+	resCh            map[int]*chan any
+	resMu            map[int]*sync.Mutex
 }
 
 func (rsm *RSM) reader() {
 	for msg := range rsm.applyCh {
 		if msg.CommandValid {
-			rsm.sm.DoOp(msg.Command)
-			rsm.curraftstate += int(unsafe.Sizeof(msg.Command))
-			if rsm.maxraftstate != -1 && rsm.curraftstate > rsm.maxraftstate {
-				// snapshot
-				snapshot := rsm.sm.Snapshot()
-				rsm.rf.Snapshot(msg.CommandIndex, snapshot)
-				rsm.curraftstate = 0
+			op := msg.Command.(Op)
+			res := rsm.sm.DoOp(op.Cmd)
+			log.Printf("[%d] apply op{type=%s, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Me, msg.CommandIndex)
+			rsm.mu.Lock()
+			if rsm.lastAppliedIndex+1 != msg.CommandIndex {
+				panic(fmt.Sprintf("[%d] apply to rsm out of order, expect %d, got %d", rsm.me, rsm.lastAppliedIndex+1, msg.CommandIndex))
 			}
+			rsm.lastAppliedIndex++
+			rsm.mu.Unlock()
+			if rsm.maxraftstate != -1 && rsm.rf.PersistBytes() > rsm.maxraftstate {
+				rsm.rf.Snapshot(msg.CommandIndex, rsm.sm.Snapshot())
+			}
+			if op.Me == rsm.me {
+				rsm.mu.Lock()
+				ch, ok := rsm.resCh[msg.CommandIndex]
+				if !ok {
+					rsm.mu.Unlock()
+					continue
+				}
+				mu := rsm.resMu[msg.CommandIndex]
+				log.Printf("[%d] return res{type=%s, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Me, msg.CommandIndex)
+				rsm.mu.Unlock()
+				mu.Lock()
+				(*ch) <- res
+				mu.Unlock()
+			}
+
 		} else if msg.SnapshotValid {
 			rsm.sm.Restore(msg.Snapshot)
-			rsm.curraftstate = 0
+			rsm.mu.Lock()
+			rsm.lastAppliedIndex = max(rsm.lastAppliedIndex, msg.SnapshotIndex)
+			rsm.mu.Unlock()
 		}
 	}
 }
@@ -80,10 +106,14 @@ func (rsm *RSM) reader() {
 // any long-running work.
 func MakeRSM(servers []*labrpc.ClientEnd, me int, persister *tester.Persister, maxraftstate int, sm StateMachine) *RSM {
 	rsm := &RSM{
-		me:           me,
-		maxraftstate: maxraftstate,
-		applyCh:      make(chan raftapi.ApplyMsg),
-		sm:           sm,
+		me:               me,
+		maxraftstate:     maxraftstate,
+		applyCh:          make(chan raftapi.ApplyMsg),
+		sm:               sm,
+		lastAppliedIndex: 0,
+		nextCmdId:        1,
+		resCh:            make(map[int]*chan any),
+		resMu:            make(map[int]*sync.Mutex),
 	}
 	if !useRaftStateMachine {
 		rsm.rf = raft.Make(servers, me, persister, rsm.applyCh)
@@ -103,16 +133,47 @@ func (rsm *RSM) Submit(req any) (rpc.Err, any) {
 	// Submit creates an Op structure to run a command through Raft;
 	// for example: op := Op{Me: rsm.me, Id: id, Req: req}, where req
 	// is the argument to Submit and id is a unique id for the op.
-	term, _ := rsm.Raft().GetState()
-	op := Op{Cmd: req, Me: rsm.me, Id: term}
+	ch := make(chan any)
+	var mu sync.Mutex
+	rsm.mu.Lock()
+	op := Op{Cmd: req, Me: rsm.me}
 	index, term, isLeader := rsm.rf.Start(op)
 	if !isLeader {
+		rsm.mu.Unlock()
 		return rpc.ErrWrongLeader, nil
 	}
+	log.Printf("[%d] submit op{type=%s, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Me, index)
+	rsm.resCh[index] = &ch
+	rsm.resMu[index] = &mu
+	rsm.mu.Unlock()
+	defer func() {
+		rsm.mu.Lock()
+		delete(rsm.resCh, index)
+		mu.Lock()
+		close(ch)
+		mu.Unlock()
+		delete(rsm.resMu, index)
+		rsm.mu.Unlock()
+	}()
 
-	// Wait for the command to be committed.
-	
-
-	// your code here
-	return rpc.OK, nil // i'm dead, try another server.
+	ticker := time.NewTicker(50 * time.Millisecond)
+	defer ticker.Stop()
+	for {
+		select {
+		case res := <-ch:
+			rsm.mu.Lock()
+			log.Printf("[%d] return res%v, index %d\n", rsm.me, index, res)
+			rsm.mu.Unlock()
+			return rpc.OK, res
+		case <-ticker.C:
+			curTerm, isLeader := rsm.rf.GetState()
+			rsm.mu.Lock()
+			if rsm.lastAppliedIndex >= index || curTerm != term || !isLeader {
+				log.Printf("[%d] submit op{type=%s, me=%d} failed\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Me)
+				rsm.mu.Unlock()
+				return rpc.ErrWrongLeader, nil
+			}
+			rsm.mu.Unlock()
+		}
+	}
 }
