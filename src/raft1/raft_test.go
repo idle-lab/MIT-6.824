@@ -10,7 +10,6 @@ package raft
 
 import (
 	"fmt"
-	"io"
 	"log"
 	"strings"
 
@@ -29,7 +28,6 @@ import (
 const RaftElectionTimeout = 1000 * time.Millisecond
 
 func TestInitialElection3A(t *testing.T) {
-	log.SetOutput(io.Discard)
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -60,7 +58,6 @@ func TestInitialElection3A(t *testing.T) {
 }
 
 func TestReElection3A(t *testing.T) {
-	log.SetOutput(io.Discard)
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -106,7 +103,6 @@ func TestReElection3A(t *testing.T) {
 }
 
 func TestManyElections3A(t *testing.T) {
-	log.SetOutput(io.Discard)
 	servers := 7
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()
@@ -139,14 +135,12 @@ func TestManyElections3A(t *testing.T) {
 		tester.AnnotateConnection(ts.g.GetConnected())
 		log.SetPrefix(fmt.Sprintf("iteration %v 3 |", ii))
 	}
-	log.SetPrefix("")
 	DPrintf("reconnected all servers\n")
 	// log.SetOutput(io.Discard)
 	ts.checkOneLeader()
 }
 
 func TestBasicAgree3B(t *testing.T) {
-	log.SetPrefix("")
 	servers := 3
 	ts := makeTest(t, servers, true, false)
 	defer ts.cleanup()

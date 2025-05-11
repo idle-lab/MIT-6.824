@@ -3,11 +3,11 @@
 LOG_FILE="fail_log.txt"
 > "$LOG_FILE"  # 清空旧日志
 
-for i in $(seq 1 50); do
+for i in $(seq 1 200); do
     echo "===== Run #$i ====="
     
     # 把本次测试的输出先捕获到一个变量
-    output=$(time go test -run 3B 2>&1)
+    time go test -run 4B -race &2>1
     status=$?
 
     if [ $status -ne 0 ]; then
@@ -18,4 +18,4 @@ for i in $(seq 1 50); do
     fi
 done
 
-echo "✅ All 50 tests passed successfully."
+echo "✅ All 200 tests passed successfully."

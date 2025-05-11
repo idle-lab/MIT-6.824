@@ -1,16 +1,18 @@
 package kvraft
 
 import (
-	"6.5840/kvsrv1/rpc"
-	"6.5840/kvtest1"
-	"6.5840/tester1"
-)
+	"time"
 
+	"6.5840/kvsrv1/rpc"
+	kvtest "6.5840/kvtest1"
+	tester "6.5840/tester1"
+)
 
 type Clerk struct {
 	clnt    *tester.Clnt
 	servers []string
 	// You will have to modify this struct.
+	curLeader int
 }
 
 func MakeClerk(clnt *tester.Clnt, servers []string) kvtest.IKVClerk {
@@ -30,9 +32,22 @@ func MakeClerk(clnt *tester.Clnt, servers []string) kvtest.IKVClerk {
 // must match the declared types of the RPC handler function's
 // arguments. Additionally, reply must be passed as a pointer.
 func (ck *Clerk) Get(key string) (string, rpc.Tversion, rpc.Err) {
+	args := rpc.GetArgs{Key: key}
+	for {
+		var reply rpc.GetReply
+		ok := ck.clnt.Call(ck.servers[ck.curLeader], "KVServer.Get", &args, &reply)
+		if !ok {
+			time.Sleep(100 * time.Millisecond)
+			ck.curLeader = (ck.curLeader + 1) % len(ck.servers)
+			continue
+		}
+		if reply.Err == rpc.ErrWrongLeader {
+			ck.curLeader = (ck.curLeader + 1) % len(ck.servers)
+			continue
+		}
 
-	// You will have to modify this function.
-	return "", 0, ""
+		return reply.Value, reply.Version, reply.Err
+	}
 }
 
 // Put updates key with value only if the version in the
@@ -54,5 +69,31 @@ func (ck *Clerk) Get(key string) (string, rpc.Tversion, rpc.Err) {
 // arguments. Additionally, reply must be passed as a pointer.
 func (ck *Clerk) Put(key string, value string, version rpc.Tversion) rpc.Err {
 	// You will have to modify this function.
-	return ""
+	args := rpc.PutArgs{
+		Key:     key,
+		Value:   value,
+		Version: version,
+	}
+
+	retryCnt := 0
+	for {
+		var reply rpc.PutReply
+		ok := ck.clnt.Call(ck.servers[ck.curLeader], "KVServer.Put", &args, &reply)
+		retryCnt++
+		if !ok {
+			time.Sleep(100 * time.Millisecond)
+			ck.curLeader = (ck.curLeader + 1) % len(ck.servers)
+			continue
+		}
+
+		if reply.Err == rpc.ErrWrongLeader {
+			ck.curLeader = (ck.curLeader + 1) % len(ck.servers)
+			continue
+		}
+
+		if retryCnt >= 2 && reply.Err == rpc.ErrVersion {
+			return rpc.ErrMaybe
+		}
+		return reply.Err
+	}
 }

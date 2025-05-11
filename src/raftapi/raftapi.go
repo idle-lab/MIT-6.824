@@ -36,6 +36,4 @@ type ApplyMsg struct {
 	Snapshot      []byte
 	SnapshotTerm  int
 	SnapshotIndex int
-
-	NoOpLogValid bool
 }

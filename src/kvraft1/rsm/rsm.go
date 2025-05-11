@@ -5,6 +5,7 @@ import (
 	"log"
 	"reflect"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"6.5840/kvsrv1/rpc"
@@ -15,7 +16,7 @@ import (
 )
 
 var useRaftStateMachine bool // to plug in another raft besided raft1
-const Debug = false
+const Debug = true
 
 func DPrintf(format string, a ...interface{}) {
 	if Debug {
@@ -29,6 +30,11 @@ type Op struct {
 	// otherwise RPC will break.
 	Cmd any
 	Me  int
+}
+
+type OpReply struct {
+	from int
+	res  any
 }
 
 // A server (i.e., ../server.go) that wants to replicate itself calls
@@ -53,34 +59,37 @@ type RSM struct {
 	// Your definitions here.
 	lastAppliedIndex int
 	nextCmdId        uint64
-	resCh            map[int]*chan any
-	resMu            map[int]*sync.Mutex
+	resCh            map[int]*chan OpReply
+	done             atomic.Bool
 }
 
 func (rsm *RSM) reader() {
 	for msg := range rsm.applyCh {
 		switch {
 		case msg.CommandValid:
-			op := msg.Command.(Op)
-			res := rsm.sm.DoOp(op.Cmd)
-			DPrintf("[%d] apply op{type=%s, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Me, msg.CommandIndex)
 			rsm.mu.Lock()
-			if rsm.lastAppliedIndex+1 != msg.CommandIndex {
-				panic(fmt.Sprintf("[%d] apply to rsm out of order, expect %d, got %d", rsm.me, rsm.lastAppliedIndex+1, msg.CommandIndex))
-			}
-			rsm.lastAppliedIndex++
-			rsm.mu.Unlock()
-			if op.Me == rsm.me {
-				rsm.mu.Lock()
-				ch, ok := rsm.resCh[msg.CommandIndex]
-				if !ok {
-					rsm.mu.Unlock()
-					continue
+			var res any
+			op := Op{Me: -1}
+			if msg.Command != nil {
+				op = msg.Command.(Op)
+				res = rsm.sm.DoOp(op.Cmd)
+				DPrintf("[%d] apply op{type=%s, cmd=%v, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Cmd, op.Me, msg.CommandIndex)
+				if rsm.lastAppliedIndex+1 != msg.CommandIndex {
+					panic(fmt.Sprintf("[%d] apply to rsm out of order, expect %d, got %d", rsm.me, rsm.lastAppliedIndex+1, msg.CommandIndex))
 				}
-				DPrintf("[%d] return res{type=%s, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Me, msg.CommandIndex)
-				(*ch) <- res
-				rsm.mu.Unlock()
 			}
+
+			rsm.lastAppliedIndex++
+
+			ch, ok := rsm.resCh[msg.CommandIndex]
+			if !ok {
+				rsm.mu.Unlock()
+				continue
+			}
+
+			(*ch) <- OpReply{from: op.Me, res: res}
+			rsm.mu.Unlock()
+
 			if rsm.maxraftstate != -1 && rsm.rf.PersistBytes() > rsm.maxraftstate {
 				DPrintf("[%d] server trigger snapshot, index %d\n", rsm.me, msg.CommandIndex)
 				rsm.rf.Snapshot(msg.CommandIndex, rsm.sm.Snapshot())
@@ -90,12 +99,10 @@ func (rsm *RSM) reader() {
 			rsm.mu.Lock()
 			rsm.lastAppliedIndex = max(rsm.lastAppliedIndex, msg.SnapshotIndex)
 			rsm.mu.Unlock()
-		case msg.NoOpLogValid:
-			rsm.mu.Lock()
-			rsm.lastAppliedIndex++
-			rsm.mu.Unlock()
 		}
 	}
+
+	rsm.done.Store(true)
 }
 
 // servers[] contains the ports of the set of
@@ -121,8 +128,7 @@ func MakeRSM(servers []*labrpc.ClientEnd, me int, persister *tester.Persister, m
 		sm:               sm,
 		lastAppliedIndex: 0,
 		nextCmdId:        1,
-		resCh:            make(map[int]*chan any),
-		resMu:            make(map[int]*sync.Mutex),
+		resCh:            make(map[int]*chan OpReply),
 	}
 	if !useRaftStateMachine {
 		rsm.rf = raft.Make(servers, me, persister, rsm.applyCh)
@@ -142,7 +148,11 @@ func (rsm *RSM) Submit(req any) (rpc.Err, any) {
 	// Submit creates an Op structure to run a command through Raft;
 	// for example: op := Op{Me: rsm.me, Id: id, Req: req}, where req
 	// is the argument to Submit and id is a unique id for the op.
-	ch := make(chan any)
+	ch := make(chan OpReply)
+	defer close(ch)
+	if rsm.done.Load() {
+		return rpc.ErrWrongLeader, nil
+	}
 	rsm.mu.Lock()
 	op := Op{Cmd: req, Me: rsm.me}
 	index, term, isLeader := rsm.rf.Start(op)
@@ -150,36 +160,35 @@ func (rsm *RSM) Submit(req any) (rpc.Err, any) {
 		rsm.mu.Unlock()
 		return rpc.ErrWrongLeader, nil
 	}
-	DPrintf("[%d] submit op{type=%s, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Me, index)
 	rsm.resCh[index] = &ch
 	rsm.mu.Unlock()
-	defer func() {
-		rsm.mu.Lock()
-		delete(rsm.resCh, index)
-		close(ch)
-		delete(rsm.resMu, index)
-		rsm.mu.Unlock()
+
+	go func() {
+		for {
+			rsm.mu.Lock()
+			if rsm.lastAppliedIndex >= index {
+				rsm.mu.Unlock()
+				return
+			}
+			curTerm, _ := rsm.rf.GetState()
+			if rsm.done.Load() || term != curTerm {
+				delete(rsm.resCh, index)
+				rsm.mu.Unlock()
+				ch <- OpReply{from: -1, res: nil}
+				return
+			}
+			rsm.mu.Unlock()
+			time.Sleep(10 * time.Millisecond)
+		}
 	}()
 
-	ticker := time.NewTicker(50 * time.Millisecond)
-	defer ticker.Stop()
-	for {
-		select {
-		case res := <-ch:
-			rsm.mu.Lock()
-			DPrintf("[%d] return res%v, index %d\n", rsm.me, res, index)
-			rsm.mu.Unlock()
-			return rpc.OK, res
-		case <-ticker.C:
-			curTerm, isLeader := rsm.rf.GetState()
-			if rsm.mu.TryLock() {
-				if rsm.lastAppliedIndex >= index || curTerm != term || !isLeader {
-					DPrintf("[%d] submit op{type=%s, me=%d} failed\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Me)
-					rsm.mu.Unlock()
-					return rpc.ErrWrongLeader, nil
-				}
-				rsm.mu.Unlock()
-			}
-		}
+	DPrintf("[%d] wait for res{type=%s, cmd=%v, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Cmd, op.Me, index)
+	reply := <-ch
+	if reply.from != rsm.me {
+		DPrintf("[%d] apply reply{res=%v, from=%d} not for me, index %d\n", rsm.me, reply.res, reply.from, index)
+		return rpc.ErrWrongLeader, nil
 	}
+
+	DPrintf("[%d] return res%v of req=%v , index %d\n", rsm.me, reply, op.Cmd, index)
+	return rpc.OK, reply.res
 }

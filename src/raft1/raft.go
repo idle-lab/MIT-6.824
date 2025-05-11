@@ -32,8 +32,8 @@ const (
 const (
 	heartbeatInterval     = 50 * time.Millisecond
 	requestVoteInterval   = 200 * time.Millisecond
-	electionTimeoutBegin  = 500 // ms
-	electionTimeoutLength = 300
+	electionTimeoutBegin  = 400 // ms
+	electionTimeoutLength = 200
 )
 
 type RaftLog struct {
@@ -123,8 +123,8 @@ type Raft struct {
 	dead      int32               // set by Kill()
 	applyCond *sync.Cond
 	applyCh   chan raftapi.ApplyMsg
-	chMu      sync.Mutex
 	snapshot  []byte
+	startCh   chan struct{}
 
 	// Leader state
 	state       int // 0: follower, 1: candidate, 2: leader
@@ -297,8 +297,7 @@ func (rf *Raft) becomeLeader() {
 		rf.nextIndex[i] = rf.log[0].Index + len(rf.log)
 		rf.matchIndex[i] = 0
 	}
-	// no-op
-	// Refer to Section 8
+
 	rf.log = append(rf.log, RaftLog{
 		Cmd:   nil,
 		Term:  rf.currentTerm,
@@ -383,6 +382,13 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		DPrintf("[%s %d %d] received append entries from %d, term %d, prevLogIndex %d, prevLogTerm %d\n", rf.stateName, rf.me, rf.currentTerm, args.LeaderId, args.Term, args.PrevLogIndex, args.PrevLogTerm)
 	}
 
+	if args.PrevLogIndex < rf.log[0].Index {
+		reply.Success = true
+		rf.mu.Unlock()
+		rf.heartbeatCh <- struct{}{}
+		return
+	}
+
 	idx := rf.toIndex(args.PrevLogIndex)
 	if idx >= len(rf.log) || rf.log[idx].Term != args.PrevLogTerm {
 		DPrintf("[%s %d %d] reject append entries from %d, because prevLogIndex %d is out of range or prevLogTerm %d is not match\n", rf.stateName, rf.me, rf.currentTerm, args.LeaderId, args.PrevLogIndex, args.PrevLogTerm)
@@ -406,24 +412,24 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		return
 	}
 
-	rf.log = rf.log[:idx+1]
+	if len(args.Entries) > 0 && args.Entries[0].Index > rf.commitIndex {
+		rf.log = rf.log[:idx+1]
 
-	for i := range args.Entries {
-		if args.Entries[i].Index != rf.log[0].Index+len(rf.log) {
-			panic(fmt.Sprintf("[%s %d] args.Entries[i].Index != rf.log[0].Index+len(rf.log)", rf.stateName, rf.me))
+		for i := range args.Entries {
+			if args.Entries[i].Index != rf.log[0].Index+len(rf.log) {
+				panic(fmt.Sprintf("[%s %d] args.Entries[i].Index != rf.log[0].Index+len(rf.log)", rf.stateName, rf.me))
+			}
+			rf.log = append(rf.log, args.Entries[i])
 		}
-		rf.log = append(rf.log, args.Entries[i])
+
+		DPrintf("[%s %d %d] cur log %v\n", rf.stateName, rf.me, rf.currentTerm, rf.log)
 	}
 
-	DPrintf("[%s %d %d] cur log %v\n", rf.stateName, rf.me, rf.currentTerm, rf.log)
-
-	if args.LeaderCommit > rf.commitIndex {
-		rf.commitIndex = min(args.LeaderCommit, rf.log[len(rf.log)-1].Index)
-	}
+	rf.commitIndex = max(rf.commitIndex, min(args.LeaderCommit, rf.log[len(rf.log)-1].Index))
 	rf.applyCond.Broadcast()
 	rf.repCount = append(rf.repCount, make([]int, len(args.Entries))...)
-	reply.Success = true
 	rf.persist()
+	reply.Success = true
 
 	rf.mu.Unlock()
 	rf.heartbeatCh <- struct{}{}
@@ -575,7 +581,7 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
-	if rf.state != LEADER {
+	if rf.killed() || rf.state != LEADER {
 		isLeader = false
 		return index, term, isLeader
 	}
@@ -593,6 +599,10 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 	DPrintf("[%s %d %d] start command %v, index %d, term %d\n", rf.stateName, rf.me, rf.currentTerm, command, index, term)
 	DPrintf("[%s %d %d] cur log %v\n", rf.stateName, rf.me, rf.currentTerm, rf.log)
 	rf.persist()
+	select {
+	case rf.startCh <- struct{}{}:
+	default:
+	}
 	return index, term, isLeader
 }
 
@@ -606,12 +616,9 @@ func (rf *Raft) Start(command interface{}) (int, int, bool) {
 // confusing debug output. any goroutine with a long-running loop
 // should call killed() to check whether it should stop.
 func (rf *Raft) Kill() {
-	// Your code here, if desired.
-	rf.chMu.Lock()
 	atomic.StoreInt32(&rf.dead, 1)
-	close(rf.applyCh)
+	// Your code here, if desired.
 	rf.applyCond.Broadcast()
-	rf.chMu.Unlock()
 }
 
 func (rf *Raft) killed() bool {
@@ -636,7 +643,11 @@ func (rf *Raft) startHeartbeat() {
 		go func(server int) {
 			tick := time.NewTicker(heartbeatInterval)
 			defer tick.Stop()
-			for range tick.C {
+			for {
+				select {
+				case <-tick.C:
+				case <-rf.startCh:
+				}
 				if rf.killed() {
 					return
 				}
@@ -795,7 +806,7 @@ func (rf *Raft) startElection() {
 			done.Store(false)
 			for {
 				rf.mu.Lock()
-				if args.Term != rf.currentTerm {
+				if rf.state == LEADER || args.Term != rf.currentTerm {
 					rf.mu.Unlock()
 					done.Store(true)
 					return
@@ -903,6 +914,7 @@ func (rf *Raft) ticker() {
 }
 
 func (rf *Raft) applyer() {
+	defer close(rf.applyCh)
 	for !rf.killed() {
 		rf.mu.Lock()
 		for !rf.killed() && rf.lastApplied == rf.commitIndex {
@@ -912,31 +924,20 @@ func (rf *Raft) applyer() {
 		commitIndex := rf.commitIndex
 		for i := rf.lastApplied + 1; i <= rf.commitIndex; i++ {
 			j := rf.toIndex(i)
-			if rf.log[j].Cmd == nil {
-				commitLogs = append(commitLogs, raftapi.ApplyMsg{
-					CommandValid:  false,
-					SnapshotValid: false,
-					NoOpLogValid:  true,
-				})
-			} else {
-				commitLogs = append(commitLogs, raftapi.ApplyMsg{
-					CommandValid:  true,
-					Command:       rf.log[j].Cmd,
-					CommandIndex:  rf.log[j].Index,
-					SnapshotValid: false,
-				})
-			}
+			commitLogs = append(commitLogs, raftapi.ApplyMsg{
+				CommandValid:  true,
+				Command:       rf.log[j].Cmd,
+				CommandIndex:  rf.log[j].Index,
+				SnapshotValid: false,
+			})
 		}
 		DPrintf("[%s %d %d] apply logs=%v\n", rf.stateName, rf.me, rf.currentTerm, rf.log[rf.toIndex(rf.lastApplied+1):rf.toIndex(rf.commitIndex+1)])
 		rf.mu.Unlock()
 		for i := range commitLogs {
-			rf.chMu.Lock()
 			if rf.killed() {
-				rf.chMu.Unlock()
-				break
+				return
 			}
 			rf.applyCh <- commitLogs[i]
-			rf.chMu.Unlock()
 		}
 		rf.mu.Lock()
 		rf.lastApplied = commitIndex
@@ -973,6 +974,7 @@ func Make(peers []*labrpc.ClientEnd, me int,
 	rf.lastApplied = 0
 	rf.applyCh = applyCh
 	rf.applyCond = sync.NewCond(&rf.mu)
+	rf.startCh = make(chan struct{})
 
 	// initialize from state persisted before a crash
 	rf.readPersist(persister.ReadRaftState())
