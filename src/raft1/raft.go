@@ -298,6 +298,8 @@ func (rf *Raft) becomeLeader() {
 		rf.matchIndex[i] = 0
 	}
 
+	// No-op entry
+	// Refer to Raft paper, section 8
 	rf.log = append(rf.log, RaftLog{
 		Cmd:   nil,
 		Term:  rf.currentTerm,
@@ -755,25 +757,25 @@ func (rf *Raft) startHeartbeat() {
 
 						if args.Entries == nil {
 							DPrintf("[%s %d %d] send heartbeat to %d success\n", rf.stateName, rf.me, term, server)
-						} else {
+							// TODP: heartbeat lease?
+						} else if args.Entries[0].Index == rf.nextIndex[server] {
 							DPrintf("[%s %d %d] send append entries to %d success, range [%d, %d]\n", rf.stateName, rf.me, term, server, args.Entries[0].Index, args.Entries[len(args.Entries)-1].Index)
-						}
-
-						rf.nextIndex[server] = args.PrevLogIndex + len(args.Entries) + 1
-						for i := range args.Entries {
-							if args.Entries[i].Term != rf.currentTerm {
-								continue
-							}
-							if rf.commitIndex < args.Entries[i].Index {
-								j := rf.toIndex(args.Entries[i].Index)
-								rf.repCount[j] |= (1 << server)
-								DPrintf("[%s %d %d] repCount[%d]=%d\n", rf.stateName, rf.me, term, args.Entries[i].Index, rf.repCount[j])
-								if bits.OnesCount32(uint32(rf.repCount[j])) > len(rf.peers)/2 {
-									rf.commitIndex = args.Entries[i].Index
+							rf.nextIndex[server] = args.PrevLogIndex + len(args.Entries) + 1
+							for i := range args.Entries {
+								if args.Entries[i].Term != rf.currentTerm {
+									continue
+								}
+								if rf.commitIndex < args.Entries[i].Index {
+									j := rf.toIndex(args.Entries[i].Index)
+									rf.repCount[j] |= (1 << server)
+									DPrintf("[%s %d %d] repCount[%d]=%d\n", rf.stateName, rf.me, term, args.Entries[i].Index, rf.repCount[j])
+									if bits.OnesCount32(uint32(rf.repCount[j])) > len(rf.peers)/2 {
+										rf.commitIndex = args.Entries[i].Index
+									}
 								}
 							}
+							rf.applyCond.Broadcast()
 						}
-						rf.applyCond.Broadcast()
 						rf.mu.Unlock()
 					}
 				}()
