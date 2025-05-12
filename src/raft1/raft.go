@@ -673,6 +673,10 @@ func (rf *Raft) startHeartbeat() {
 				// Send log entries should not be blocked
 				go func() {
 					rf.mu.Lock()
+					if rf.state != LEADER {
+						rf.mu.Unlock()
+						return
+					}
 					if rf.nextIndex[server] <= rf.log[0].Index {
 						args := InstallSnapshotArgs{
 							Term:              term,
@@ -716,7 +720,7 @@ func (rf *Raft) startHeartbeat() {
 							args.Entries = make([]RaftLog, len(slice))
 							copy(args.Entries, slice)
 						}
-						DPrintf("[%s %d %d] commitIndex %d, lastApplied %d, log %v\n", rf.stateName, rf.me, term, rf.commitIndex, rf.lastApplied, rf.log)
+						DPrintf("[%s %d %d] commitIndex %d, lastApplied %d, nextIndex=%v, log %v\n", rf.stateName, rf.me, term, rf.commitIndex, rf.lastApplied, rf.nextIndex, rf.log)
 						rf.mu.Unlock()
 
 						var reply AppendEntriesReply
