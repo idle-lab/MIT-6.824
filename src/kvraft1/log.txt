@@ -1,0 +1,1973 @@
+panic: test timed out after 10m0s
+	running tests:
+		TestPersistPartitionUnreliableLinearizable4B (8m32s)
+
+goroutine 725804 [running]:
+testing.(*M).startAlarm.func1()
+	/usr/local/go/src/testing/testing.go:2373 +0x385
+created by time.goFunc
+	/usr/local/go/src/time/sleep.go:215 +0x2d
+
+goroutine 1 [chan receive, 8 minutes]:
+testing.(*T).Run(0xc0000d01a0, {0x6a5f69?, 0x0?}, 0x6b2e18)
+	/usr/local/go/src/testing/testing.go:1751 +0x3ab
+testing.runTests.func1(0xc0000d01a0)
+	/usr/local/go/src/testing/testing.go:2168 +0x37
+testing.tRunner(0xc0000d01a0, 0xc000143c70)
+	/usr/local/go/src/testing/testing.go:1690 +0xf4
+testing.runTests(0xc0000d6000, {0x88c9e0, 0x16, 0x16}, {0x4719d0?, 0x47163a?, 0x8913e0?})
+	/usr/local/go/src/testing/testing.go:2166 +0x43d
+testing.(*M).Run(0xc0000d4000)
+	/usr/local/go/src/testing/testing.go:2034 +0x64a
+main.main()
+	_testmain.go:87 +0x9b
+
+goroutine 19 [syscall, 9 minutes]:
+os/signal.signal_recv()
+	/usr/local/go/src/runtime/sigqueue.go:152 +0x29
+os/signal.loop()
+	/usr/local/go/src/os/signal/signal_unix.go:23 +0x13
+created by os/signal.Notify.func1.1 in goroutine 1
+	/usr/local/go/src/os/signal/signal.go:151 +0x1f
+
+goroutine 20 [chan receive, 9 minutes]:
+6.5840/tester1.captureSignal.func1()
+	/home/cyb/6.5840/src/tester1/annotation.go:592 +0x5e
+created by 6.5840/tester1.captureSignal in goroutine 1
+	/home/cyb/6.5840/src/tester1/annotation.go:591 +0x98
+
+goroutine 477818 [chan receive, 8 minutes]:
+6.5840/kvraft1.(*Test).GenericTest(0xc0003ab770)
+	/home/cyb/6.5840/src/kvraft1/kvraft_test.go:68 +0x2da
+6.5840/kvraft1.TestPersistPartitionUnreliableLinearizable4B(0xc0002256c0?)
+	/home/cyb/6.5840/src/kvraft1/kvraft_test.go:336 +0x69
+testing.tRunner(0xc0002256c0, 0x6b2e18)
+	/usr/local/go/src/testing/testing.go:1690 +0xf4
+created by testing.(*T).Run in goroutine 1
+	/usr/local/go/src/testing/testing.go:1743 +0x390
+
+goroutine 507496 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 507418
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 24 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0000fc120)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0000fc120)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 21
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 498347 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 498140
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 639108 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 639071
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 92527 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 92595
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 549695 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 549679
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 319659 [chan receive, 8 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc000197320)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc000197320)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 319650
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 632450 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 632337
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 94282 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 94262
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477820 [sync.Cond.Wait]:
+sync.runtime_notifyListWait(0xc000496b90, 0x985)
+	/usr/local/go/src/runtime/sema.go:587 +0x159
+sync.(*Cond).Wait(0x69ef9f?)
+	/usr/local/go/src/sync/cond.go:71 +0x85
+6.5840/raft1.(*Raft).applyer(0xc0002a1560)
+	/home/cyb/6.5840/src/raft1/raft.go:927 +0x350
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:989 +0x2e5
+
+goroutine 92569 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 92593
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 628084 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 628007
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477833 [select]:
+6.5840/raft1.(*Raft).startElection(0xc0002a1c20)
+	/home/cyb/6.5840/src/raft1/raft.go:845 +0x3ca
+6.5840/raft1.(*Raft).ticker(0xc0002a1c20)
+	/home/cyb/6.5840/src/raft1/raft.go:913 +0xbc
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 140444 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 140473
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 414938 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 414967
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477850 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0x61ee9c?, 0x8, 0xc00063ec40, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 628101 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 628004
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 7640 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 7772
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 155253 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 154711
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 586381 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 586402
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 476380 [chan receive, 8 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc00013a900)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc00013a900)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 474137
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 477843 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0x7f54b0de5db8?, 0x1, 0xc00063e930, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 477839 [select]:
+6.5840/raft1.(*Raft).followerTick(0xc000484240)
+	/home/cyb/6.5840/src/raft1/raft.go:887 +0xeb
+6.5840/raft1.(*Raft).ticker(0xc000484240)
+	/home/cyb/6.5840/src/raft1/raft.go:909 +0xd3
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 91646 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 91657
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 7643 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 7771
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 541228 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 541144
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 708200 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 708173
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 484735 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 484770
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 472096 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 472088
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 315390 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 315364
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 154715 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 154714
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 473978 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 473986
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 155697 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc00013a240)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc00013a240)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 147397
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 609187 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 607530
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 593280 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 593260
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 147247 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 147256
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725769 [sleep]:
+time.Sleep(0xbebc200)
+	/usr/local/go/src/runtime/time.go:315 +0xf2
+6.5840/raft1.(*Raft).startElection.func1(0x6)
+	/home/cyb/6.5840/src/raft1/raft.go:835 +0x9a
+created by 6.5840/raft1.(*Raft).startElection in goroutine 477833
+	/home/cyb/6.5840/src/raft1/raft.go:810 +0x1ee
+
+goroutine 315425 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 315365
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477845 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0xc0004d56b8?, 0x3, 0xc00063ea10, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 478511 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 478257
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 508765 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 508740
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 589948 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 589736
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 596480 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 596285
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 67294 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 67287
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477832 [sync.Cond.Wait]:
+sync.runtime_notifyListWait(0xc000497390, 0x4da)
+	/usr/local/go/src/runtime/sema.go:587 +0x159
+sync.(*Cond).Wait(0xc0002a1c20?)
+	/usr/local/go/src/sync/cond.go:71 +0x85
+6.5840/raft1.(*Raft).applyer(0xc0002a1c20)
+	/home/cyb/6.5840/src/raft1/raft.go:927 +0x350
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:989 +0x2e5
+
+goroutine 91071 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 89919
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477835 [sync.Cond.Wait]:
+sync.runtime_notifyListWait(0xc000497590, 0x901)
+	/usr/local/go/src/runtime/sema.go:587 +0x159
+sync.(*Cond).Wait(0x69ef9f?)
+	/usr/local/go/src/sync/cond.go:71 +0x85
+6.5840/raft1.(*Raft).applyer(0xc000484000)
+	/home/cyb/6.5840/src/raft1/raft.go:927 +0x350
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:989 +0x2e5
+
+goroutine 477840 [chan receive]:
+6.5840/kvraft1/rsm.(*RSM).reader(0xc00083f980)
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:67 +0x6d
+created by 6.5840/kvraft1/rsm.MakeRSM in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:136 +0x178
+
+goroutine 683030 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 682723
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477824 [select]:
+6.5840/raft1.(*Raft).followerTick(0xc0002a17a0)
+	/home/cyb/6.5840/src/raft1/raft.go:887 +0xeb
+6.5840/raft1.(*Raft).ticker(0xc0002a17a0)
+	/home/cyb/6.5840/src/raft1/raft.go:909 +0xd3
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 8876 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0001970e0)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0001970e0)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 8870
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 79501 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 79530
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 524983 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 524900
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 507999 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 507420
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 672706 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 672561
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 542663 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 542662
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 573493 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 572896
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 91668 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 91655
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 165339 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a1680)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a1680)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 147397
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 486350 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 486320
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 676464 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 676463
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 474321 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 474293
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 493850 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 493825
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 225275 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0000fc240)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0000fc240)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 173651
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 665030 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 664439
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 476526 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 476542
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477854 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0xc00013a5a0?, 0xc, 0xc00063ee70, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 477819 [select]:
+6.5840/labrpc.MakeNetwork.func1()
+	/home/cyb/6.5840/src/labrpc/labrpc.go:161 +0xea
+created by 6.5840/labrpc.MakeNetwork in goroutine 477818
+	/home/cyb/6.5840/src/labrpc/labrpc.go:159 +0x196
+
+goroutine 17832 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 17518
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 67290 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 67289
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 510795 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 510791
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 474146 [chan receive, 8 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0000fcea0)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0000fcea0)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 474137
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 477827 [select]:
+6.5840/raft1.(*Raft).followerTick(0xc0002a19e0)
+	/home/cyb/6.5840/src/raft1/raft.go:887 +0xeb
+6.5840/raft1.(*Raft).ticker(0xc0002a19e0)
+	/home/cyb/6.5840/src/raft1/raft.go:909 +0xd3
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 268633 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 268609
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 476532 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 476531
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 479889 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 479792
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 619973 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 619962
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 523043 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 522923
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 554171 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 554199
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 498243 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 498136
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 588325 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 588165
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 510797 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 510787
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477851 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0x56222c333a226449?, 0x9, 0xc00063ecb0, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 173367 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 173276
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477823 [sync.Cond.Wait]:
+sync.runtime_notifyListWait(0xc000496d90, 0x4ff)
+	/usr/local/go/src/runtime/sema.go:587 +0x159
+sync.(*Cond).Wait(0x69ef9f?)
+	/usr/local/go/src/sync/cond.go:71 +0x85
+6.5840/raft1.(*Raft).applyer(0xc0002a17a0)
+	/home/cyb/6.5840/src/raft1/raft.go:927 +0x350
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:989 +0x2e5
+
+goroutine 472093 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 472087
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 478234 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 478241
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477856 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0x7016d8?, 0xe, 0xc00063ef50, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 539093 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 538984
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 173666 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a1d40)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a1d40)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 173651
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 81623 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc000196fc0)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc000196fc0)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 81620
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 475091 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 475064
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 369958 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 369926
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 549168 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 548847
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 582851 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 582709
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 669858 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 669676
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 136743 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 136711
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 147428 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0000fc7e0)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0000fc7e0)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 147397
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 365661 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 365671
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 90144 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 91073
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 583995 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 583989
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 24174 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a05a0)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a05a0)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 24171
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 550579 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 550378
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 578020 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 577928
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477822 [chan receive]:
+6.5840/kvraft1/rsm.(*RSM).reader(0xc00083f0e0)
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:67 +0x6d
+created by 6.5840/kvraft1/rsm.MakeRSM in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:136 +0x178
+
+goroutine 725829 [chan receive]:
+6.5840/labrpc.(*ClientEnd).Call(0xc000192320, {0x69c59f?, 0xc000cf3cb0?}, {0x63fa40, 0xc000383a00}, {0x63fa80, 0xc000cf3cb0})
+	/home/cyb/6.5840/src/labrpc/labrpc.go:120 +0x226
+6.5840/raft1.(*Raft).sendAppendEntries(0xc000484000, 0xbf?, 0xc000383a00, 0x0?)
+	/home/cyb/6.5840/src/raft1/raft.go:541 +0x65
+6.5840/raft1.(*Raft).startHeartbeat.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:727 +0x50d
+created by 6.5840/raft1.(*Raft).startHeartbeat.func1 in goroutine 725683
+	/home/cyb/6.5840/src/raft1/raft.go:674 +0xbe
+
+goroutine 477853 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0xc00013a5a0?, 0xb, 0xc00063ed90, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 317184 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc000196c60)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc000196c60)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 317172
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 477829 [sync.Cond.Wait]:
+sync.runtime_notifyListWait(0xc000497190, 0x8da)
+	/usr/local/go/src/runtime/sema.go:587 +0x159
+sync.(*Cond).Wait(0x69ef9f?)
+	/usr/local/go/src/sync/cond.go:71 +0x85
+6.5840/raft1.(*Raft).applyer(0xc0002a1b00)
+	/home/cyb/6.5840/src/raft1/raft.go:927 +0x350
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:989 +0x2e5
+
+goroutine 477837 [chan receive]:
+6.5840/kvraft1/rsm.(*RSM).reader(0xc00083f7a0)
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:67 +0x6d
+created by 6.5840/kvraft1/rsm.MakeRSM in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:136 +0x178
+
+goroutine 693865 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 693781
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 94265 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 94264
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477831 [chan receive]:
+6.5840/kvraft1/rsm.(*RSM).reader(0xc00083f4a0)
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:67 +0x6d
+created by 6.5840/kvraft1/rsm.MakeRSM in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:136 +0x178
+
+goroutine 477847 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0x6017d363a225622?, 0x5, 0xc00063eaf0, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 147230 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 147257
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 317168 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 317329
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 76700 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a0360)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a0360)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 76656
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 370114 [chan receive, 8 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0000fc5a0)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0000fc5a0)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 319650
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 596383 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 596282
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 695700 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 695688
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477838 [sync.Cond.Wait]:
+sync.runtime_notifyListWait(0xc000497790, 0x9df)
+	/usr/local/go/src/runtime/sema.go:587 +0x159
+sync.(*Cond).Wait(0x69ef9f?)
+	/usr/local/go/src/sync/cond.go:71 +0x85
+6.5840/raft1.(*Raft).applyer(0xc000484240)
+	/home/cyb/6.5840/src/raft1/raft.go:927 +0x350
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:989 +0x2e5
+
+goroutine 541251 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 541147
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 522978 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 522893
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477852 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0xc00013a5a0?, 0xa, 0xc00063ed20, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 629222 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 629244
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 575653 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 574951
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 557686 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 557681
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 478235 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 478224
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 524278 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 522920
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 165089 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 164652
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 365673 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 365672
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 605356 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 605367
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 165073 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 164650
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477825 [chan receive, 7 minutes]:
+6.5840/kvraft1/rsm.(*RSM).reader(0xc00083f200)
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:67 +0x6d
+created by 6.5840/kvraft1/rsm.MakeRSM in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:136 +0x178
+
+goroutine 510319 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 510195
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477830 [select]:
+6.5840/raft1.(*Raft).followerTick(0xc0002a1b00)
+	/home/cyb/6.5840/src/raft1/raft.go:887 +0xeb
+6.5840/raft1.(*Raft).ticker(0xc0002a1b00)
+	/home/cyb/6.5840/src/raft1/raft.go:909 +0xd3
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 639971 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 639907
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 317331 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 317330
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 79506 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a1440)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a1440)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 79487
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 542063 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 541946
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 318964 [chan receive, 8 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc000196b40)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc000196b40)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 317172
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 477836 [chan receive]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc000484000)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc000484000)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 143952 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 144002
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 476547 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 476543
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 720279 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 720206
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 475223 [chan receive, 8 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc000197200)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc000197200)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 474137
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 140476 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 140475
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 474001 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 473987
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 414969 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 414968
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 173285 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 173275
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725815 [chan receive]:
+6.5840/labrpc.(*ClientEnd).Call(0xc0001922e0, {0x69c59f?, 0xc000478e10?}, {0x63fa40, 0xc0001a2240}, {0x63fa80, 0xc000478e10})
+	/home/cyb/6.5840/src/labrpc/labrpc.go:120 +0x226
+6.5840/raft1.(*Raft).sendAppendEntries(0xc000484000, 0xbf?, 0xc0001a2240, 0xc00003c508?)
+	/home/cyb/6.5840/src/raft1/raft.go:541 +0x65
+6.5840/raft1.(*Raft).startHeartbeat.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:727 +0x50d
+created by 6.5840/raft1.(*Raft).startHeartbeat.func1 in goroutine 725681
+	/home/cyb/6.5840/src/raft1/raft.go:674 +0xbe
+
+goroutine 682875 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 682687
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 144005 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 144004
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 551801 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 551686
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 563329 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 563235
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 549060 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 548866
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 512218 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 512200
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 94423 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a0ea0)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a0ea0)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 94420
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 695559 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 694711
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 553573 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 553498
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 268610 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 268544
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 221673 [chan send, 9 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 221748
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 715134 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 715120
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 539086 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 538983
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 317905 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a0240)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a0240)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 317172
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 369930 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 369929
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 505643 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 505595
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477821 [select]:
+6.5840/raft1.(*Raft).followerTick(0xc0002a1560)
+	/home/cyb/6.5840/src/raft1/raft.go:887 +0xeb
+6.5840/raft1.(*Raft).ticker(0xc0002a1560)
+	/home/cyb/6.5840/src/raft1/raft.go:909 +0xd3
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 477841 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).SpawnClientsAndWait(0xc0003c4db0, 0xf, 0x3b9aca00, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:162 +0x1ba
+6.5840/kvraft1.(*Test).GenericTest.func1()
+	/home/cyb/6.5840/src/kvraft1/kvraft_test.go:52 +0xc5
+created by 6.5840/kvraft1.(*Test).GenericTest in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/kvraft_test.go:51 +0x245
+
+goroutine 689438 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 689407
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 476507 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 476529
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 664526 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 664434
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 476509 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 476541
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 558962 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 558759
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 417645 [chan receive, 8 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a0900)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a0900)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 319650
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 725801 [chan receive]:
+6.5840/labrpc.(*ClientEnd).Call(0xc0001922a0, {0x69c59f?, 0xc000021590?}, {0x63fa40, 0xc0001b8f40}, {0x63fa80, 0xc000021590})
+	/home/cyb/6.5840/src/labrpc/labrpc.go:120 +0x226
+6.5840/raft1.(*Raft).sendAppendEntries(0xc000484000, 0xbf?, 0xc0001b8f40, 0xc00003ea08?)
+	/home/cyb/6.5840/src/raft1/raft.go:541 +0x65
+6.5840/raft1.(*Raft).startHeartbeat.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:727 +0x50d
+created by 6.5840/raft1.(*Raft).startHeartbeat.func1 in goroutine 725647
+	/home/cyb/6.5840/src/raft1/raft.go:674 +0xbe
+
+goroutine 477834 [chan receive, 8 minutes]:
+6.5840/kvraft1/rsm.(*RSM).reader(0xc00083f5c0)
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:67 +0x6d
+created by 6.5840/kvraft1/rsm.MakeRSM in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:136 +0x178
+
+goroutine 558855 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 558764
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 666501 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 666436
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 270691 [chan receive, 9 minutes]:
+6.5840/raft1.(*Raft).startHeartbeat(0xc0002a07e0)
+	/home/cyb/6.5840/src/raft1/raft.go:789 +0x1fd
+6.5840/raft1.(*Raft).ticker(0xc0002a07e0)
+	/home/cyb/6.5840/src/raft1/raft.go:917 +0xa5
+created by 6.5840/raft1.Make in goroutine 173651
+	/home/cyb/6.5840/src/raft1/raft.go:990 +0x325
+
+goroutine 477855 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0xc0002fc3f0?, 0xd, 0xc00063eee0, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 477826 [sync.Cond.Wait]:
+sync.runtime_notifyListWait(0xc000496f90, 0x3f4)
+	/usr/local/go/src/runtime/sema.go:587 +0x159
+sync.(*Cond).Wait(0xc0002a19e0?)
+	/usr/local/go/src/sync/cond.go:71 +0x85
+6.5840/raft1.(*Raft).applyer(0xc0002a19e0)
+	/home/cyb/6.5840/src/raft1/raft.go:927 +0x350
+created by 6.5840/raft1.Make in goroutine 477818
+	/home/cyb/6.5840/src/raft1/raft.go:989 +0x2e5
+
+goroutine 507507 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 507419
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 417487 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 417470
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477844 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0x0?, 0x2, 0xc00063e9a0, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 725647 [select]:
+6.5840/raft1.(*Raft).startHeartbeat.func1(0x0)
+	/home/cyb/6.5840/src/raft1/raft.go:649 +0x105
+created by 6.5840/raft1.(*Raft).startHeartbeat in goroutine 477836
+	/home/cyb/6.5840/src/raft1/raft.go:645 +0x1d2
+
+goroutine 725683 [select]:
+6.5840/raft1.(*Raft).startHeartbeat.func1(0x4)
+	/home/cyb/6.5840/src/raft1/raft.go:649 +0x105
+created by 6.5840/raft1.(*Raft).startHeartbeat in goroutine 477836
+	/home/cyb/6.5840/src/raft1/raft.go:645 +0x1d2
+
+goroutine 484765 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 484769
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 721806 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 721761
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 492270 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 492232
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 476231 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 476200
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477828 [chan receive, 8 minutes]:
+6.5840/kvraft1/rsm.(*RSM).reader(0xc00083f380)
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:67 +0x6d
+created by 6.5840/kvraft1/rsm.MakeRSM in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/rsm/rsm.go:136 +0x178
+
+goroutine 476545 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 476544
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 588885 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 588782
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477842 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0xc00030a230?, 0x0, 0xc00063e230, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 477661 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 477613
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725681 [select]:
+6.5840/raft1.(*Raft).startHeartbeat.func1(0x2)
+	/home/cyb/6.5840/src/raft1/raft.go:649 +0x105
+created by 6.5840/raft1.(*Raft).startHeartbeat in goroutine 477836
+	/home/cyb/6.5840/src/raft1/raft.go:645 +0x1d2
+
+goroutine 549517 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 548846
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 417522 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 417521
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477848 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0xc0000f0500?, 0x6, 0xc00063eb60, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 507590 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 507417
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 475075 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 475065
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 573705 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 573704
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 567370 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 567387
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 499441 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 499360
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725768 [sleep]:
+time.Sleep(0xbebc200)
+	/usr/local/go/src/runtime/time.go:315 +0xf2
+6.5840/raft1.(*Raft).startElection.func1(0x5)
+	/home/cyb/6.5840/src/raft1/raft.go:835 +0x9a
+created by 6.5840/raft1.(*Raft).startElection in goroutine 477833
+	/home/cyb/6.5840/src/raft1/raft.go:810 +0x1ee
+
+goroutine 575043 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 574949
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 575682 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 574948
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 595953 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 595076
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 477849 [chan send, 8 minutes]:
+6.5840/kvtest1.(*Test).runClient(0xc000274e00?, 0x7, 0xc00063ebd0, 0xc00063e1c0, {0x6fd2c0, 0xc0003ab770}, 0xc000586120)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:146 +0x86
+created by 6.5840/kvtest1.(*Test).SpawnClientsAndWait in goroutine 477841
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:158 +0x8d
+
+goroutine 595280 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 595078
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 478561 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 478258
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 478245 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 478244
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 479103 [sleep]:
+time.Sleep(0x4247c600)
+	/usr/local/go/src/runtime/time.go:315 +0xf2
+6.5840/kvtest1.(*Test).Partitioner(0xc0003c4db0, 0x0, 0xc00063e0e0)
+	/home/cyb/6.5840/src/kvtest1/kvtest.go:253 +0x127
+created by 6.5840/kvraft1.(*Test).GenericTest in goroutine 477818
+	/home/cyb/6.5840/src/kvraft1/kvraft_test.go:65 +0x2cb
+
+goroutine 539117 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 538982
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 524958 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 524902
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 613260 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 613233
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 583991 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 583990
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 695026 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 694710
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 485683 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 485525
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 573490 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 573009
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 714578 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 714399
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 493289 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 493250
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 639951 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 639904
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 491440 [chan send, 8 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 491495
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 575086 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 574950
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725766 [sleep]:
+time.Sleep(0xbebc200)
+	/usr/local/go/src/runtime/time.go:315 +0xf2
+6.5840/raft1.(*Raft).startElection.func1(0x2)
+	/home/cyb/6.5840/src/raft1/raft.go:835 +0x9a
+created by 6.5840/raft1.(*Raft).startElection in goroutine 477833
+	/home/cyb/6.5840/src/raft1/raft.go:810 +0x1ee
+
+goroutine 644273 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 644154
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 507470 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 507415
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 627717 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 627673
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 656845 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 656733
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 589850 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 589740
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 542093 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 541944
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 595342 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 595074
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 541235 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 541148
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 551803 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 551685
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 590492 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 590486
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 578050 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 577929
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 498463 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 498139
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 542094 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 541945
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 625164 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 625163
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 596448 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 596287
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 549593 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 548845
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 503588 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 503436
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725682 [select]:
+6.5840/raft1.(*Raft).startHeartbeat.func1(0x3)
+	/home/cyb/6.5840/src/raft1/raft.go:649 +0x105
+created by 6.5840/raft1.(*Raft).startHeartbeat in goroutine 477836
+	/home/cyb/6.5840/src/raft1/raft.go:645 +0x1d2
+
+goroutine 666368 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 666408
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 686361 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 686268
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 559525 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 558761
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 534504 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 534436
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 532088 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 532000
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 549691 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 549675
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 682785 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 682622
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 568187 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 568182
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 717193 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 715181
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 666418 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 666407
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 573040 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 573012
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 643627 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 643571
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 634573 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 634407
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 522995 [chan send, 7 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 522888
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 643725 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 643570
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 588538 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 588166
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 549058 [chan send, 6 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 548865
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725795 [chan receive]:
+6.5840/labrpc.(*ClientEnd).Call(0xc000192320, {0x69c59f?, 0xc000021500?}, {0x63fa40, 0xc0001b8740}, {0x63fa80, 0xc000021500})
+	/home/cyb/6.5840/src/labrpc/labrpc.go:120 +0x226
+6.5840/raft1.(*Raft).sendAppendEntries(0xc000484000, 0xbf?, 0xc0001b8740, 0x0?)
+	/home/cyb/6.5840/src/raft1/raft.go:541 +0x65
+6.5840/raft1.(*Raft).startHeartbeat.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:727 +0x50d
+created by 6.5840/raft1.(*Raft).startHeartbeat.func1 in goroutine 725683
+	/home/cyb/6.5840/src/raft1/raft.go:674 +0xbe
+
+goroutine 581049 [chan send, 5 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 580867
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 723659 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 723696
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 589840 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 589738
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 630043 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 629894
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 643600 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 643572
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 602171 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 602053
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725764 [sleep]:
+time.Sleep(0xbebc200)
+	/usr/local/go/src/runtime/time.go:315 +0xf2
+6.5840/raft1.(*Raft).startElection.func1(0x0)
+	/home/cyb/6.5840/src/raft1/raft.go:835 +0x9a
+created by 6.5840/raft1.(*Raft).startElection in goroutine 477833
+	/home/cyb/6.5840/src/raft1/raft.go:810 +0x1ee
+
+goroutine 604545 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 604536
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725767 [sleep]:
+time.Sleep(0xbebc200)
+	/usr/local/go/src/runtime/time.go:315 +0xf2
+6.5840/raft1.(*Raft).startElection.func1(0x3)
+	/home/cyb/6.5840/src/raft1/raft.go:835 +0x9a
+created by 6.5840/raft1.(*Raft).startElection in goroutine 477833
+	/home/cyb/6.5840/src/raft1/raft.go:810 +0x1ee
+
+goroutine 715380 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 715201
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 595319 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 595075
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 634488 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 634411
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 596379 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 596283
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 589857 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 589741
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 588308 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 588162
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 658720 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 658551
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725799 [chan receive]:
+6.5840/labrpc.(*ClientEnd).Call(0xc000192360, {0x69c59f?, 0xc000021560?}, {0x63fa40, 0xc0001b8cc0}, {0x63fa80, 0xc000021560})
+	/home/cyb/6.5840/src/labrpc/labrpc.go:120 +0x226
+6.5840/raft1.(*Raft).sendAppendEntries(0xc000484000, 0xbf?, 0xc0001b8cc0, 0x0?)
+	/home/cyb/6.5840/src/raft1/raft.go:541 +0x65
+6.5840/raft1.(*Raft).startHeartbeat.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:727 +0x50d
+created by 6.5840/raft1.(*Raft).startHeartbeat.func1 in goroutine 725684
+	/home/cyb/6.5840/src/raft1/raft.go:674 +0xbe
+
+goroutine 617903 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 617893
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 607644 [chan send, 4 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 607529
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 629261 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 629241
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 628103 [chan send, 3 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 628006
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 650338 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 650261
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 723656 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 723693
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725684 [select]:
+6.5840/raft1.(*Raft).startHeartbeat.func1(0x6)
+	/home/cyb/6.5840/src/raft1/raft.go:649 +0x105
+created by 6.5840/raft1.(*Raft).startHeartbeat in goroutine 477836
+	/home/cyb/6.5840/src/raft1/raft.go:645 +0x1d2
+
+goroutine 725648 [select]:
+6.5840/raft1.(*Raft).startHeartbeat.func1(0x1)
+	/home/cyb/6.5840/src/raft1/raft.go:649 +0x105
+created by 6.5840/raft1.(*Raft).startHeartbeat in goroutine 477836
+	/home/cyb/6.5840/src/raft1/raft.go:645 +0x1d2
+
+goroutine 664530 [chan send, 2 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 664438
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 694956 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 694712
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 683044 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 682686
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 700464 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 700454
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725765 [sleep]:
+time.Sleep(0xbebc200)
+	/usr/local/go/src/runtime/time.go:315 +0xf2
+6.5840/raft1.(*Raft).startElection.func1(0x1)
+	/home/cyb/6.5840/src/raft1/raft.go:835 +0x9a
+created by 6.5840/raft1.(*Raft).startElection in goroutine 477833
+	/home/cyb/6.5840/src/raft1/raft.go:810 +0x1ee
+
+goroutine 695664 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 695686
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 684402 [chan send, 1 minutes]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 684363
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 701996 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 701987
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725779 [chan receive]:
+6.5840/labrpc.(*ClientEnd).Call(0xc000192100, {0x69ba1a?, 0xc0007f44e0?}, {0x63fb00, 0xc0009ed060}, {0x63fb40, 0xc0007f44e0})
+	/home/cyb/6.5840/src/labrpc/labrpc.go:120 +0x226
+6.5840/raft1.(*Raft).sendRequestVote(0xc0002a1c20, 0x3?, 0xc0009ed060, 0x0?)
+	/home/cyb/6.5840/src/raft1/raft.go:524 +0x65
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:825 +0x8d
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 725765
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 723727 [chan send]:
+6.5840/raft1.(*Raft).startElection.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:832 +0x1ba
+created by 6.5840/raft1.(*Raft).startElection.func1 in goroutine 723695
+	/home/cyb/6.5840/src/raft1/raft.go:823 +0x90
+
+goroutine 725817 [chan receive]:
+6.5840/labrpc.(*ClientEnd).Call(0xc000192300, {0x69c59f?, 0xc000478e40?}, {0x63fa40, 0xc0001a2540}, {0x63fa80, 0xc000478e40})
+	/home/cyb/6.5840/src/labrpc/labrpc.go:120 +0x226
+6.5840/raft1.(*Raft).sendAppendEntries(0xc000484000, 0xbf?, 0xc0001a2540, 0xc00003c508?)
+	/home/cyb/6.5840/src/raft1/raft.go:541 +0x65
+6.5840/raft1.(*Raft).startHeartbeat.func1.1()
+	/home/cyb/6.5840/src/raft1/raft.go:727 +0x50d
+created by 6.5840/raft1.(*Raft).startHeartbeat.func1 in goroutine 725682
+	/home/cyb/6.5840/src/raft1/raft.go:674 +0xbe
+exit status 2
+FAIL	6.5840/kvraft1	600.015s

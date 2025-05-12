@@ -7,7 +7,7 @@ for i in $(seq 1 50); do
     echo "===== Run #$i ====="
     
     # 把本次测试的输出先捕获到一个变量
-    output=$(time go test -run 4B 2>&1)
+    output=$(time go test -run 4A 2>&1)
     status=$?
 
     if [ $status -ne 0 ]; then
@@ -16,7 +16,6 @@ for i in $(seq 1 50); do
         echo "$output" >> "$LOG_FILE"
         exit 1
     fi
-    echo "$output"
 done
 
 echo "✅ All 50 tests passed successfully."

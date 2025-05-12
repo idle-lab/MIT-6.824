@@ -1,6 +1,7 @@
 package kvraft
 
 import (
+	"bytes"
 	"sync"
 	"sync/atomic"
 
@@ -11,9 +12,9 @@ import (
 	tester "6.5840/tester1"
 )
 
-type value struct {
-	value   string
-	version rpc.Tversion
+type Value struct {
+	Value   string
+	Version rpc.Tversion
 }
 
 type KVServer struct {
@@ -23,7 +24,7 @@ type KVServer struct {
 
 	// Your definitions here.
 	mu sync.RWMutex
-	mp map[string]*value
+	mp map[string]*Value
 }
 
 // To type-cast req to the right type, take a look at Go's type switches or type
@@ -45,24 +46,24 @@ func (kv *KVServer) DoOp(req any) any {
 			reply.Version = 0
 		} else {
 			reply.Err = rpc.OK
-			reply.Value = v.value
-			reply.Version = v.version
+			reply.Value = v.Value
+			reply.Version = v.Version
 		}
 		return reply
 	case rpc.PutArgs:
 		reply := rpc.PutReply{}
 		kv.mu.Lock()
 		if val, ok := kv.mp[args.Key]; ok {
-			if val.version == args.Version {
-				val.value = args.Value
-				val.version++
+			if val.Version == args.Version {
+				val.Value = args.Value
+				val.Version++
 				reply.Err = rpc.OK
 			} else {
 				reply.Err = rpc.ErrVersion
 			}
 		} else {
 			if args.Version == 0 {
-				kv.mp[args.Key] = &value{value: args.Value, version: 1}
+				kv.mp[args.Key] = &Value{Value: args.Value, Version: 1}
 				reply.Err = rpc.OK
 			} else {
 				reply.Err = rpc.ErrNoKey
@@ -75,12 +76,26 @@ func (kv *KVServer) DoOp(req any) any {
 }
 
 func (kv *KVServer) Snapshot() []byte {
-	// Your code here
-	return nil
+	kv.mu.RLock()
+	defer kv.mu.RUnlock()
+	w := new(bytes.Buffer)
+	e := labgob.NewEncoder(w)
+	err := e.Encode(kv.mp)
+	if err != nil {
+		panic(err)
+	}
+	return w.Bytes()
 }
 
 func (kv *KVServer) Restore(data []byte) {
-	// Your code here
+	kv.mu.Lock()
+	defer kv.mu.Unlock()
+	r := bytes.NewBuffer(data)
+	d := labgob.NewDecoder(r)
+	err := d.Decode(&kv.mp)
+	if err != nil {
+		panic(err)
+	}
 }
 
 func (kv *KVServer) Get(args *rpc.GetArgs, reply *rpc.GetReply) {
@@ -138,6 +153,6 @@ func StartKVServer(servers []*labrpc.ClientEnd, gid tester.Tgid, me int, persist
 
 	kv.rsm = rsm.MakeRSM(servers, me, persister, maxraftstate, kv)
 	// You may need initialization code here.
-	kv.mp = make(map[string]*value)
+	kv.mp = make(map[string]*Value)
 	return []tester.IService{kv, kv.rsm.Raft()}
 }

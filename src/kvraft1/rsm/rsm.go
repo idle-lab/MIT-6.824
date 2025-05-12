@@ -1,7 +1,6 @@
 package rsm
 
 import (
-	"fmt"
 	"log"
 	"reflect"
 	"sync"
@@ -16,7 +15,7 @@ import (
 )
 
 var useRaftStateMachine bool // to plug in another raft besided raft1
-const Debug = true
+const Debug = false
 
 func DPrintf(format string, a ...interface{}) {
 	if Debug {
@@ -68,18 +67,15 @@ func (rsm *RSM) reader() {
 		switch {
 		case msg.CommandValid:
 			rsm.mu.Lock()
-			var res any
-			op := Op{Me: -1}
-			if msg.Command != nil {
-				op = msg.Command.(Op)
-				res = rsm.sm.DoOp(op.Cmd)
-				DPrintf("[%d] apply op{type=%s, cmd=%v, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Cmd, op.Me, msg.CommandIndex)
-				if rsm.lastAppliedIndex+1 != msg.CommandIndex {
-					panic(fmt.Sprintf("[%d] apply to rsm out of order, expect %d, got %d", rsm.me, rsm.lastAppliedIndex+1, msg.CommandIndex))
-				}
+			op := msg.Command.(Op)
+			res := rsm.sm.DoOp(op.Cmd)
+			DPrintf("[%d] apply op{type=%s, cmd=%v, me=%d}, index %d\n", rsm.me, reflect.TypeOf(op.Cmd).Name(), op.Cmd, op.Me, msg.CommandIndex)
+			DPrintf("[%d] cur persist bytes %d (max=%d)\n", rsm.me, rsm.rf.PersistBytes(), rsm.maxraftstate)
+			if rsm.maxraftstate != -1 && rsm.rf.PersistBytes() > rsm.maxraftstate {
+				DPrintf("[%d] server trigger snapshot, index %d\n", rsm.me, msg.CommandIndex)
+				rsm.rf.Snapshot(msg.CommandIndex, rsm.sm.Snapshot())
 			}
-
-			rsm.lastAppliedIndex++
+			rsm.lastAppliedIndex = msg.CommandIndex
 
 			ch, ok := rsm.resCh[msg.CommandIndex]
 			if !ok {
@@ -88,12 +84,9 @@ func (rsm *RSM) reader() {
 			}
 
 			(*ch) <- OpReply{from: op.Me, res: res}
+
 			rsm.mu.Unlock()
 
-			if rsm.maxraftstate != -1 && rsm.rf.PersistBytes() > rsm.maxraftstate {
-				DPrintf("[%d] server trigger snapshot, index %d\n", rsm.me, msg.CommandIndex)
-				rsm.rf.Snapshot(msg.CommandIndex, rsm.sm.Snapshot())
-			}
 		case msg.SnapshotValid:
 			rsm.sm.Restore(msg.Snapshot)
 			rsm.mu.Lock()
@@ -132,6 +125,10 @@ func MakeRSM(servers []*labrpc.ClientEnd, me int, persister *tester.Persister, m
 	}
 	if !useRaftStateMachine {
 		rsm.rf = raft.Make(servers, me, persister, rsm.applyCh)
+	}
+	snapshot := persister.ReadSnapshot()
+	if len(snapshot) > 0 {
+		rsm.sm.Restore(snapshot)
 	}
 	go rsm.reader()
 	return rsm

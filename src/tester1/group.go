@@ -2,6 +2,7 @@ package tester
 
 import (
 	//"log"
+	"log"
 	"strconv"
 	"sync"
 
@@ -210,12 +211,15 @@ func (sg *ServerGrp) GetConnected() []bool {
 // Maximum log size across all servers
 func (sg *ServerGrp) LogSize() int {
 	logsize := 0
-	for _, s := range sg.srvs {
+	server := 0
+	for i, s := range sg.srvs {
 		n := s.saved.RaftStateSize()
 		if n > logsize {
 			logsize = n
+			server = i
 		}
 	}
+	log.Printf("[test] server %d has max state size %d\n", server, logsize)
 	return logsize
 }
 
