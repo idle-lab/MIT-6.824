@@ -24,7 +24,7 @@ type KVServer struct {
 
 	// Your definitions here.
 	mu sync.RWMutex
-	mp map[string]*Value
+	mp map[string]Value
 }
 
 // To type-cast req to the right type, take a look at Go's type switches or type
@@ -53,17 +53,16 @@ func (kv *KVServer) DoOp(req any) any {
 	case rpc.PutArgs:
 		reply := rpc.PutReply{}
 		kv.mu.Lock()
-		if val, ok := kv.mp[args.Key]; ok {
-			if val.Version == args.Version {
-				val.Value = args.Value
-				val.Version++
+		if _, ok := kv.mp[args.Key]; ok {
+			if kv.mp[args.Key].Version == args.Version {
+				kv.mp[args.Key] = Value{Value: args.Value, Version: args.Version + 1}
 				reply.Err = rpc.OK
 			} else {
 				reply.Err = rpc.ErrVersion
 			}
 		} else {
 			if args.Version == 0 {
-				kv.mp[args.Key] = &Value{Value: args.Value, Version: 1}
+				kv.mp[args.Key] = Value{Value: args.Value, Version: 1}
 				reply.Err = rpc.OK
 			} else {
 				reply.Err = rpc.ErrNoKey
@@ -84,6 +83,7 @@ func (kv *KVServer) Snapshot() []byte {
 	if err != nil {
 		panic(err)
 	}
+	rsm.DPrintf("[%d] snapshot %v\n", kv.me, kv.mp)
 	return w.Bytes()
 }
 
@@ -96,6 +96,7 @@ func (kv *KVServer) Restore(data []byte) {
 	if err != nil {
 		panic(err)
 	}
+	rsm.DPrintf("[%d] restore %v\n", kv.me, kv.mp)
 }
 
 func (kv *KVServer) Get(args *rpc.GetArgs, reply *rpc.GetReply) {
@@ -133,6 +134,7 @@ func (kv *KVServer) Put(args *rpc.PutArgs, reply *rpc.PutReply) {
 func (kv *KVServer) Kill() {
 	atomic.StoreInt32(&kv.dead, 1)
 	// Your code here, if desired.
+	kv.rsm.Raft().Kill()
 }
 
 func (kv *KVServer) killed() bool {
@@ -153,6 +155,6 @@ func StartKVServer(servers []*labrpc.ClientEnd, gid tester.Tgid, me int, persist
 
 	kv.rsm = rsm.MakeRSM(servers, me, persister, maxraftstate, kv)
 	// You may need initialization code here.
-	kv.mp = make(map[string]*Value)
+	kv.mp = make(map[string]Value)
 	return []tester.IService{kv, kv.rsm.Raft()}
 }

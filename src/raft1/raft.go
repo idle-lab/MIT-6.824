@@ -13,6 +13,7 @@ import (
 	"fmt"
 	"math/bits"
 	"math/rand"
+	"slices"
 	"sync"
 	"sync/atomic"
 	"time"
@@ -178,6 +179,13 @@ func (rf *Raft) persist() {
 	rf.persister.Save(w.Bytes(), rf.snapshot)
 }
 
+func (rf *Raft) sendHeartbateCh() {
+	select {
+	case rf.heartbeatCh <- struct{}{}:
+	default:
+	}
+}
+
 // restore previously persisted state.
 func (rf *Raft) readPersist(data []byte) {
 	if data == nil || len(data) < 1 { // bootstrap without any state?
@@ -198,7 +206,7 @@ func (rf *Raft) readPersist(data []byte) {
 	rf.currentTerm = currentTerm
 	rf.votedFor = votedFor
 	rf.log = log
-	rf.lastApplied = log[0].Index
+	rf.lastApplied = max(0, log[0].Index-1)
 	rf.commitIndex = log[0].Index
 	rf.repCount = make([]int, len(rf.log))
 	rf.snapshot = rf.persister.ReadSnapshot()
@@ -219,6 +227,9 @@ func (rf *Raft) PersistBytes() int {
 func (rf *Raft) Snapshot(index int, snapshot []byte) {
 	rf.mu.Lock()
 	defer rf.mu.Unlock()
+	if index <= rf.log[0].Index {
+		return
+	}
 	index = rf.toIndex(index)
 	rf.log = rf.log[index:]
 	rf.repCount = rf.repCount[index:]
@@ -246,6 +257,9 @@ func (rf *Raft) updateVoteFor(id int) {
 func (rf *Raft) toIndex(index int) int {
 	if index < rf.log[0].Index {
 		panic(fmt.Sprintf("[%s %d %d] index=%d, log[0].Index=%d", rf.stateName, rf.me, rf.currentTerm, index, rf.log[0].Index))
+	}
+	if index-rf.log[0].Index >= len(rf.log) {
+		DPrintf("[%s %d %d] index-rf.log[0].Index=%d, len(rf.log)=%d, nextIndex=%v\n", rf.stateName, rf.me, rf.currentTerm, index-rf.log[0].Index, len(rf.log), rf.nextIndex)
 	}
 	return index - rf.log[0].Index
 }
@@ -298,16 +312,6 @@ func (rf *Raft) becomeLeader() {
 		rf.matchIndex[i] = 0
 	}
 
-	// No-op entry
-	// Refer to Raft paper, section 8
-	// rf.log = append(rf.log, RaftLog{
-	// 	Cmd:   nil,
-	// 	Term:  rf.currentTerm,
-	// 	Index: rf.nextIndex[rf.me],
-	// })
-	// rf.repCount = append(rf.repCount, (1 << rf.me))
-	// rf.nextIndex[rf.me]++
-
 	rf.persist()
 	DPrintf("[%s %d %d] candidate => leader\n", rf.stateName, rf.me, rf.currentTerm)
 	// log.SetPrefix(fmt.Sprintf("leader %d | ", rf.me) + log.Prefix())
@@ -354,7 +358,7 @@ func (rf *Raft) RequestVote(args *RequestVoteArgs, reply *RequestVoteReply) {
 	DPrintf("[%s %d %d] voted for %d, term %d\n", rf.stateName, rf.me, rf.currentTerm, args.CandidateId, args.Term)
 	rf.mu.Unlock()
 
-	rf.heartbeatCh <- struct{}{}
+	rf.sendHeartbateCh()
 }
 
 func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply) {
@@ -387,7 +391,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	if args.PrevLogIndex < rf.log[0].Index {
 		reply.Success = true
 		rf.mu.Unlock()
-		rf.heartbeatCh <- struct{}{}
+		rf.sendHeartbateCh()
 		return
 	}
 
@@ -397,11 +401,11 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		reply.XIndex = -1
 		reply.XLen = -1
 		reply.XTerm = -1
-		if args.PrevLogIndex >= len(rf.log) {
+		if idx >= len(rf.log) {
 			reply.XLen = rf.log[0].Index + len(rf.log)
 		} else {
-			reply.XTerm = rf.log[args.PrevLogIndex].Term
-			for i := args.PrevLogIndex; i > 0 && i > rf.commitIndex; i-- {
+			reply.XTerm = rf.log[idx].Term
+			for i := idx; i > 0 && i > rf.commitIndex; i-- {
 				if rf.log[i].Term != reply.XTerm {
 					break
 				}
@@ -410,7 +414,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 		}
 		rf.mu.Unlock()
 
-		rf.heartbeatCh <- struct{}{}
+		rf.sendHeartbateCh()
 		return
 	}
 
@@ -438,7 +442,7 @@ func (rf *Raft) AppendEntries(args *AppendEntriesArgs, reply *AppendEntriesReply
 	reply.Success = true
 
 	rf.mu.Unlock()
-	rf.heartbeatCh <- struct{}{}
+	rf.sendHeartbateCh()
 }
 
 func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapshotArgs) {
@@ -461,36 +465,25 @@ func (rf *Raft) InstallSnapshot(args *InstallSnapshotArgs, reply *InstallSnapsho
 	rf.updateTerm(args.Term)
 	reply.Term = args.Term
 
-	DPrintf("[%s %d %d] received install snapshot from %d, term %d, LastIncludedTerm %d, LastIncludedIndex %d\n", rf.stateName, rf.me, rf.currentTerm, args.LeaderId, args.Term, args.LastIncludedIndex, args.LastIncludedTerm)
+	DPrintf("[%s %d %d] received install snapshot from %d, term %d, LastIncludedIndex %d, LastIncludedTerm %d\n", rf.stateName, rf.me, rf.currentTerm, args.LeaderId, args.Term, args.LastIncludedIndex, args.LastIncludedTerm)
 
-	if args.LastIncludedIndex <= rf.log[0].Index {
+	if args.LastIncludedIndex <= rf.commitIndex {
 		rf.mu.Unlock()
-		rf.heartbeatCh <- struct{}{}
+		rf.sendHeartbateCh()
 		return
 	}
 
-	if args.LastIncludedIndex > rf.log[len(rf.log)-1].Index {
-		rf.log = make([]RaftLog, 1)
-	} else {
-		rf.log = rf.log[rf.toIndex(args.LastIncludedIndex):]
-	}
-
+	rf.log = make([]RaftLog, 1)
 	rf.log[0].Index = args.LastIncludedIndex
 	rf.log[0].Term = args.LastIncludedTerm
-	rf.lastApplied = max(rf.lastApplied, args.LastIncludedIndex)
-	rf.commitIndex = max(rf.commitIndex, args.LastIncludedIndex)
+	rf.lastApplied = args.LastIncludedIndex - 1
+	rf.commitIndex = args.LastIncludedIndex
 	rf.snapshot = args.Data
-	rf.applyCh <- raftapi.ApplyMsg{
-		CommandValid:  false,
-		SnapshotValid: true,
-		Snapshot:      rf.snapshot,
-		SnapshotTerm:  args.LastIncludedTerm,
-		SnapshotIndex: args.LastIncludedIndex,
-	}
+	rf.applyCond.Broadcast()
 	rf.persist()
 
 	rf.mu.Unlock()
-	rf.heartbeatCh <- struct{}{}
+	rf.sendHeartbateCh()
 }
 
 // example code to send a RequestVote RPC to a server.
@@ -690,9 +683,7 @@ func (rf *Raft) startHeartbeat() {
 							LeaderCommit: rf.commitIndex,
 						}
 						if rf.nextIndex[server] <= rf.log[len(rf.log)-1].Index {
-							slice := rf.log[rf.toIndex(rf.nextIndex[server]):]
-							args.Entries = make([]RaftLog, len(slice))
-							copy(args.Entries, slice)
+							args.Entries = slices.Clone(rf.log[rf.toIndex(rf.nextIndex[server]):])
 						}
 						DPrintf("[%s %d %d] commitIndex %d, lastApplied %d, nextIndex=%v, log %v\n", rf.stateName, rf.me, term, rf.commitIndex, rf.lastApplied, rf.nextIndex, rf.log)
 						DPrintf("[%s %d %d] send append entries to %d, prevLogIndex %d, prevLogTerm %d, entries %v\n", rf.stateName, rf.me, term, server, args.PrevLogIndex, args.PrevLogTerm, args.Entries)
@@ -736,7 +727,6 @@ func (rf *Raft) startHeartbeat() {
 								if rf.commitIndex < args.Entries[i].Index {
 									j := rf.toIndex(args.Entries[i].Index)
 									rf.repCount[j] |= (1 << server)
-									DPrintf("[%s %d %d] repCount[%d]=%d\n", rf.stateName, rf.me, term, args.Entries[i].Index, rf.repCount[j])
 									if bits.OnesCount32(uint32(rf.repCount[j])) > len(rf.peers)/2 {
 										rf.commitIndex = args.Entries[i].Index
 									}
@@ -753,6 +743,14 @@ func (rf *Raft) startHeartbeat() {
 				case <-rf.startCh:
 				}
 			}
+			rf.mu.Lock()
+			if !done {
+				done = true
+				rf.mu.Unlock()
+				doneCh <- struct{}{}
+				return
+			}
+			rf.mu.Unlock()
 		}(i)
 	}
 	<-doneCh
@@ -911,14 +909,25 @@ func (rf *Raft) applyer() {
 		}
 		commitLogs := make([]raftapi.ApplyMsg, rf.commitIndex-rf.lastApplied)
 		commitIndex := rf.commitIndex
+		lastApplied := rf.lastApplied
 		for i := rf.lastApplied + 1; i <= rf.commitIndex; i++ {
 			j := rf.toIndex(i)
-			commitLogs = append(commitLogs, raftapi.ApplyMsg{
-				CommandValid:  true,
-				Command:       rf.log[j].Cmd,
-				CommandIndex:  rf.log[j].Index,
-				SnapshotValid: false,
-			})
+			if j == 0 {
+				commitLogs = append(commitLogs, raftapi.ApplyMsg{
+					CommandValid:  false,
+					SnapshotValid: true,
+					Snapshot:      rf.snapshot,
+					SnapshotTerm:  rf.log[0].Term,
+					SnapshotIndex: rf.log[0].Index,
+				})
+			} else {
+				commitLogs = append(commitLogs, raftapi.ApplyMsg{
+					CommandValid:  true,
+					Command:       rf.log[j].Cmd,
+					CommandIndex:  rf.log[j].Index,
+					SnapshotValid: false,
+				})
+			}
 		}
 		DPrintf("[%s %d %d] apply logs=%v\n", rf.stateName, rf.me, rf.currentTerm, rf.log[rf.toIndex(rf.lastApplied+1):rf.toIndex(rf.commitIndex+1)])
 		rf.mu.Unlock()
@@ -929,7 +938,9 @@ func (rf *Raft) applyer() {
 			rf.applyCh <- commitLogs[i]
 		}
 		rf.mu.Lock()
-		rf.lastApplied = commitIndex
+		if rf.lastApplied == lastApplied {
+			rf.lastApplied = commitIndex
+		}
 		rf.mu.Unlock()
 	}
 }
